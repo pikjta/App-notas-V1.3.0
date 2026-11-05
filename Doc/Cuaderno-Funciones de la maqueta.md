@@ -506,3 +506,12 @@ Tarjeta del tablero «Diseño de mi app» que recoge las primeras decisiones de 
 - **Interfaz:** cuadrícula libre con tarjetas de distintos tamaños; arrastrar y soltar con imán; editar el texto con un clic; tareas y subtareas en las checklists.
 - **Datos:** «Copias automáticas en archivo» (marcada como hecha) y «Decidir fechas en tareas» (sin marcar).
 - Etiquetas: `100% local` y #diseño.
+
+## 19. Novedades de la versión 1.3.0 (resumen)
+
+- **Calendario:** el formulario de nota o recordatorio tiene «Fin» (fecha y hora) para los eventos con hora y «Hasta» (fecha) para los de día completo, así que pueden durar varios días. Hay tres tipos: «Recordatorio · con hora», «Recordatorio · sin hora» (solo fecha, con campana) y «Nota · todo el día». Si un día tiene algo de día completo, la columna (semana y día) o la celda (mes) se tiñe con su color.
+- **Campanas:** la campana de los recordatorios es la misma que la de la barra lateral (tarjeta, fila de Recordatorios y calendario).
+- **Tarjeta Paleta:** el lápiz de cada color y el «+» abren el selector de color de la app.
+- **Tabla PM:** los menús de las celdas de abajo se suben hasta verse enteros; la ventana se agranda arrastrando su esquina inferior derecha y recuerda el tamaño.
+- **Personalizar tablero y barra:** iconos de tarea por páginas (21 por página, 7 × 3); 12 colores de tablero, de tarjeta y de barra en una línea, con un botón de paleta al final que abre una cuadrícula de 12 matices × 5 intensidades y grises.
+- **Barra lateral:** cada tarea principal tiene un botón con el icono de color para cambiar su color con la cuadrícula de tonos.

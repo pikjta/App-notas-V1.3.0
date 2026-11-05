@@ -98,3 +98,51 @@ Más texturas y ambientes en todos los sitios donde se pueden elegir, con un sel
 ### Cómo se comprobó
 - Sin ejecutar nada. Pendiente: **verlas en la app real** (los dibujos CSS se han escrito sin verlos), en tablero, tarjetas, barra lateral y calendario, con ambientes claros y oscuros; revisar que el texto se lee sobre las más marcadas (Milimetrado, Estrellas, Grano) y que las miniaturas de 8 por página caben bien en el panel.
 - Observado de pasada, sin tocarlo: la pestaña «Celdas» del calendario guarda una textura (`look.cell.texture`), pero no encontré ningún sitio del código que la aplique a las celdas. Ya era así antes de esta versión.
+
+## 7. Correcciones de las pruebas nuevas (compilación en GitHub)
+
+- **Qué se pidió:** la compilación de GitHub falló en `textures130.test.ts` y `names130.test.ts`.
+- **Causa:** errores de mis pruebas, no de la app. (1) La ruta de la búsqueda es «Accueil › título», no solo «Accueil». (2) `app.css?raw` no devolvía el texto en Vitest. (3) Al leer el CSS con `node:fs`, TypeScript no encontraba los tipos de Node.
+- **Qué se hizo:** `names130.test.ts` usa `startsWith`; `textures130.test.ts` lee el CSS con `readFileSync` y un `@ts-ignore` en el import.
+- **Cómo se comprobó:** sin ejecutar; pendiente de la compilación de GitHub.
+
+## 8. Lista de mejoras de `Doc/Mejoras/` (orden 1 → 4)
+
+### 8.1 Una sola campana para los recordatorios
+- **Qué se pidió:** las campanas de la barra lateral y de la tarjeta Recordatorio deben ser la misma.
+- **Causa:** la barra lateral usa el icono `bell` (con el estilo de iconos elegido) y la tarjeta, la fila de Recordatorios y el calendario usaban los emojis 🔔/🔕.
+- **Qué se hizo:** `ReminderBody.tsx` (botón «Aviso»), `ReminderRow.tsx` y `Calendar.tsx` usan `<Icon name="bell">`. Se quitaron los emojis de `cal.rem.bellOn/bellOff` en los 6 idiomas. La campana apagada se ve atenuada (`.bell-off`).
+- **Cómo se comprobó:** sin ejecutar. Pendiente: ver las campanas en la app con cada estilo de iconos.
+
+### 8.2 «Cambiar color» en la tarjeta Paleta
+- **Qué se pidió:** en la tarjeta Paleta aparece «Cambiar color», pero no se despliega ninguna paleta.
+- **Causa:** el lápiz y el «+» eran un `<input type="color" hidden>` dentro de una etiqueta. El selector nativo no se abre de forma fiable en la ventana de la app.
+- **Qué se hizo:** `PaletteBody.tsx` usa ahora el selector de color propio de la app (`ColorPicker`, el mismo de las tarjetas y del formato de texto) tanto para cambiar un color como para añadir uno. «Automático» solo cierra el selector. El estilo de `.sw-add` se ajustó porque pasó de etiqueta a botón.
+- **Cómo se comprobó:** sin ejecutar. Pendiente: probar lápiz y «+» en una tarjeta Paleta creada desde una imagen.
+
+### 8.3 Tabla PM: menús cortados y tamaño libre
+- **Qué se pidió:** (a) con muchas filas, al elegir un valor en una celda de abajo (fecha, etiquetas) el menú se corta y no se ven las opciones; (b) poder agrandar la tabla libremente, a lo ancho y a lo alto, desde una esquina de arrastre.
+- **Causa (a):** el menú se coloca bajo la celda dentro de la ventana de la tabla, que recorta lo que sobresale; solo se limitaba la posición mínima (`m.height - 120`), insuficiente para menús altos.
+- **Qué se hizo:** en `src/views/PmTable.tsx`, `Popover` mide el menú tras dibujarlo y lo sube hasta que cabe entero en la ventana. (b) Nueva esquina de arrastre abajo a la derecha (`.pm-resize`): la ventana está centrada, así que el cambio cuenta doble para que la esquina siga al puntero. Mínimo 640 × 420; máximo, la pantalla menos 16 px. El tamaño se recuerda entre aperturas (almacenamiento local de la app, clave `omnia.pmSize`, igual para todas las tablas; si no cabe en la pantalla se ajusta). Texto nuevo `pm.table.resize` en 6 idiomas.
+- **Cómo se comprobó:** sin ejecutar. Pendiente: abrir una tabla con muchas filas, desplegar fecha y etiquetas en las últimas filas y arrastrar la esquina.
+
+### 8.4 Calendario: varios días, recordatorio sin hora y día completo coloreado
+- **Qué se pidió:** (a) poder poner un recordatorio de más de un día, con botón de fecha y hora de fin; (b) poder poner un recordatorio solo con fecha, sin hora ni duración; (c) cuando el recordatorio es de todo el día, que el día se vea sombreado o coloreado entero, no solo con un recuadro arriba.
+- **Causa:** (a) el formulario no tenía campo de fin: los eventos con hora duraban siempre 30 minutos (el dato `span` de los de día completo tampoco tenía campo). (b) «Nota · todo el día» ya llevaba solo fecha, pero no se presentaba como recordatorio. (c) el evento de día completo solo se dibujaba como etiqueta en la fila «Todo el día».
+- **Qué se hizo:**
+  - `src/views/Calendar.tsx` (formulario): nuevo campo «Fin» (fecha y hora) para eventos con hora, y «Hasta» (fecha) para los de día completo. Al mover el inicio, el fin se mueve igual (se conserva la duración). Si el fin no es posterior al inicio, avisa (`cal.ev.badEnd`). Los eventos de varios días ya se dibujaban bien (vista de semana, día y mes), porque la lógica de `calendar.ts` reparte el evento por días.
+  - Nuevo tipo «Recordatorio · sin hora» (tercera opción; «Nota · todo el día» se mantiene). Dato nuevo opcional `rem` en `CalEvent` (`src/lib/model.ts`, se guarda y se lee en `fromDocs`; los datos antiguos no cambian). Se dibuja con la campana.
+  - Día completo coloreado: en las vistas de semana y día se tiñe la columna del día y su celda de «Todo el día»; en la vista de mes, la celda del día (clases `.has-ad`, color del calendario del evento; los festivos conservan su estilo).
+  - Textos nuevos en 6 idiomas: `cal.ev.typeDayReminder`, `end`, `endDate`, `endTime`, `until`, `badEnd`.
+- **Cómo se comprobó:** sin ejecutar. Pendiente: crear un evento con hora que acabe otro día, uno de día completo de varios días, y un «Recordatorio · sin hora»; ver el sombreado en semana, día y mes; editar uno antiguo. Detalle a vigilar: si hay varios eventos de día completo el mismo día, el color es el del primero.
+
+### 8.5 Personalizar tablero y barra lateral: color de la tarea, iconos por páginas y más colores
+- **Qué se pidió:** (a) en las tareas principales, un botón en la barra lateral para cambiar el color de la tarea, con el icono de paleta de siempre; (b) mostrar los iconos de tarea por páginas, como las texturas, con 21 por página (3 filas de 7) y un poco más grandes; (c) más colores en la misma línea y, al final, una paleta de colores (cuadrícula de tonos propia); lo mismo para la barra lateral.
+- **Qué se hizo:**
+  - **Color de la tarea (a):** nuevo botón en cada fila de tarea de la barra lateral (visible al pasar el ratón, junto a «Mover a carpeta»). Usa el icono de color elegido en «Personalizar barra» (por defecto, la paleta). Abre la cuadrícula de tonos y cambia `project.color` (`src/components/Sidebar.tsx`).
+  - **Iconos por páginas (b):** el selector «Icono de la tarea» usa el mismo `Pager` de las texturas: 21 iconos por página (7 × 3), de 22 px (antes 18) y con flechas y puntos. El selector de iconos de las vistas de la barra no se ha tocado.
+  - **Más colores y paleta (c):** 5 colores nuevos al final de cada fila (los guardados no cambian): tablero (Crema, Menta, Cielo, Salvia, Rosa arcilla), tarjetas (Salvia, Rosa arcilla, Lavanda, Ocre, Tinta) y barra lateral (Cielo, Menta, Lavanda, Noche, Arena). Todos usan nombres que ya estaban traducidos. Al final de la línea hay un botón de paleta que abre una cuadrícula de 12 matices × 5 intensidades y una fila de grises (`src/components/ToneGrid.tsx`, tonos en `src/lib/tones.ts`). Sirve en el tablero, las tarjetas, la barra lateral y las pestañas del calendario (barra, fondo y celdas).
+  - **Color libre guardado:** el tema, la barra y el calendario aceptan ahora, además del id de siempre, un «#RRGGBB» (`HexColor`, funciones `boardPalette`, `cardPalette`, `sidePalette` en `src/lib/appearance.ts`). El texto sobre un color libre se elige para que se lea (4,5 : 1). Los datos antiguos siguen igual; un valor desconocido cae en el color por defecto.
+  - **Textos nuevos en 6 idiomas:** `ui.side.taskColor`, `ui.tone.grid`, `ui.tone.open`.
+  - **Pruebas:** nueva `src/__tests__/colors130.test.ts`; actualizadas `appearance.test.ts`, `legibility.test.ts` y `textures130.test.ts` (usan `boardPalette`/`cardPalette`).
+- **Cómo se comprobó:** sin ejecutar. Pendiente: abrir «Personalizar tablero» (iconos por páginas, línea de 12 colores + paleta, elegir un tono en tablero y tarjetas), «Personalizar barra» y el calendario, y el botón de color en la barra lateral. Vigilar que la línea de colores no se parta en dos filas en el panel de 440 px y que el icono de la paleta se vea sobre su fondo de colores.
