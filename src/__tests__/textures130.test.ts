@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+// @ts-ignore el proyecto no incluye los tipos de Node; Vitest sí corre en Node
 import { readFileSync } from 'node:fs';
 import { setLang } from '../i18n';
 import { AMBIENTS, AMBIENT_IDS, BOARD_COLORS, CARD_THEMES, TEXTURES, TEXTURE_IDS, normalizeTexture } from '../lib/appearance';
