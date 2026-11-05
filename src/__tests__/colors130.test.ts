@@ -22,7 +22,8 @@ describe('1.3.0: más colores y color libre', () => {
     expect(isHexColor('#a1b2c3')).toBe(true);
     expect(isHexColor('a1b2c3')).toBe(false);
     expect(normalizeBoardColor('#a1b2c3')).toBe('#A1B2C3');
-    expect(normalizeBoardColor('salvia')).toBe('salvia');
+    expect(normalizeBoardColor('salviaclaro')).toBe('salviaclaro');
+    expect(normalizeBoardColor('salvia')).toBe('niebla');
     expect(normalizeBoardColor('pizarra')).toBe('abismo');
     expect(normalizeCardTheme('#102030')).toBe('#102030');
     expect(normalizeCardTheme('no-existe')).toBe('papel');

@@ -61,7 +61,7 @@ export const normalizeTexture = (t: unknown): Texture => (typeof t === 'string' 
 /** 1.3.0: color libre elegido en la cuadrícula de tonos («#RRGGBB»); se guarda tal cual en el tema / la barra. */
 export type HexColor = `#${string}`;
 export const isHexColor = (c: unknown): c is HexColor => typeof c === 'string' && /^#[0-9A-Fa-f]{6}$/.test(c);
-export type BoardColor = 'papel' | 'hueso' | 'arena' | 'niebla' | 'lavanda' | 'noche' | 'abismo' | 'crema' | 'menta' | 'cielo' | 'salvia' | 'arcilla';
+export type BoardColor = 'papel' | 'hueso' | 'arena' | 'niebla' | 'lavanda' | 'noche' | 'abismo' | 'crema' | 'menta' | 'cielo' | 'salviaclaro' | 'arcilla';
 export type BoardColorValue = BoardColor | HexColor;
 type Palette = { name: string; bg: string; ink: string; muted: string; line: string; dark: boolean };
 const pal = (name: Key, bg: string, ink: string): Palette => {
@@ -80,7 +80,7 @@ export const BOARD_COLORS: Record<BoardColor, Palette> = {
   crema: pal('set.c.crema', '#F3E8D0', '#2B2219'),
   menta: pal('set.c.menta', '#DCEBE1', '#16291F'),
   cielo: pal('set.c.cielo', '#DDE9F3', '#142536'),
-  salvia: pal('set.sideColor.salvia', '#D3DDCB', '#1F2A1C'),
+  salviaclaro: pal('set.sideColor.salvia', '#D3DDCB', '#1F2A1C'), // id distinto de «salvia»: ese id antiguo se migra a «niebla»
   arcilla: pal('set.sideColor.arcilla', '#EBD5CC', '#33201A'),
 };
 export const BOARD_COLOR_IDS = Object.keys(BOARD_COLORS) as BoardColor[];
