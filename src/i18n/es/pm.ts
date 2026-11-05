@@ -170,6 +170,7 @@ export const pm = {
   'pm.table.searchPlaceholder': 'Buscar en esta tabla…',
   'pm.table.search': 'Buscar en esta tabla',
   'pm.table.options': 'Opciones de la tabla',
+  'pm.table.resize': 'Arrastra para cambiar el tamaño',
   'pm.table.optionsBtn': '⋯ Opciones',
   'pm.table.close': 'Cerrar',
   'pm.table.closeTip': 'Cerrar (Esc)',

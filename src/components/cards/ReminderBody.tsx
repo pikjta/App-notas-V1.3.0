@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { formatClock } from '../../lib/notify';
 import { useApp } from '../../App';
+import { Icon } from '../Icon';
 import { locale, t, tn } from '../../i18n';
 import { monthShort, weekdayInitial } from '../../lib/agenda';
 import type { ReminderCard } from '../../lib/model';
@@ -42,7 +43,7 @@ export function ReminderBody({ card }: { card: ReminderCard }) {
       {valid && <div className="small muted">{valid.toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · {formatClock(valid)}</div>}
       <div className="row wrap">
         <button className={'chip' + (card.bell ? ' on' : '')} aria-pressed={card.bell} title={card.bell ? t('cal.rem.silence') : t('cal.rem.activate')}
-          onClick={() => dispatch({ t: 'patchCard', id: card.id, patch: { bell: !card.bell } })}>{card.bell ? t('cal.rem.bellOn') : t('cal.rem.bellOff')}</button>
+          onClick={() => dispatch({ t: 'patchCard', id: card.id, patch: { bell: !card.bell } })}><Icon name="bell" size={14} /> {card.bell ? t('cal.rem.bellOn') : t('cal.rem.bellOff')}</button>
         <button className="chip" onClick={() => setOpen((o) => !o)}>{valid ? t('cal.rem.change') : t('cal.rem.pickDate')}</button>
       </div>
       {open && <DatePicker value={valid} onChange={setWhen} onClose={() => setOpen(false)} />}

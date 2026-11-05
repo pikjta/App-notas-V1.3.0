@@ -164,6 +164,7 @@ export const pm: Part<typeof Es> = {
   'pm.table.searchPlaceholder': 'Rechercher dans ce tableau…',
   'pm.table.search': 'Rechercher dans ce tableau',
   'pm.table.options': 'Options du tableau',
+  'pm.table.resize': 'Faites glisser pour redimensionner',
   'pm.table.optionsBtn': '⋯ Options',
   'pm.table.close': 'Fermer',
   'pm.table.closeTip': 'Fermer (Échap)',

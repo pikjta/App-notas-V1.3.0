@@ -12,7 +12,7 @@ import type { IcsEvent } from '../lib/ics';
 import { CAL_COLORS, uid } from '../lib/model';
 import type { CalEvent, CalView, Calendar as Cal, Repeat } from '../lib/model';
 import { CalendarPanel } from '../components/Appearance';
-import { BOARD_COLORS, CARD_THEMES, SIDE_COLORS } from '../lib/appearance';
+import { boardPalette, cardPalette, sidePalette } from '../lib/appearance';
 import { Icon } from '../components/Icon';
 import { normalizeColorIcon } from '../lib/icons';
 
@@ -32,7 +32,16 @@ export function isoWeek(k: string): number {
   return Math.ceil(((t.getTime() - y0.getTime()) / 86_400_000 + 1) / 7);
 }
 
-type Draft = { id: string | null; calendar: string; title: string; allDay: boolean; day: string; span: number; time: string; dur: number; repeat: Repeat; note: string };
+/** `endDay`/`endTime`: fin del evento (con hora) o último día (de día completo). `rem`: «Recordatorio · sin hora». */
+type Draft = { id: string | null; calendar: string; title: string; allDay: boolean; rem: boolean; day: string; endDay: string; time: string; endTime: string; repeat: Repeat; note: string };
+const pad2 = (n: number) => String(n).padStart(2, '0');
+/** Suma minutos a un día y una hora locales («AAAA-MM-DD», «HH:MM»). */
+const plusMin = (day: string, time: string, min: number): { day: string; time: string } => {
+  const d = new Date(`${day}T${time}`);
+  if (isNaN(d.getTime())) return { day, time };
+  d.setMinutes(d.getMinutes() + min);
+  return { day: dayKey(d), time: `${pad2(d.getHours())}:${pad2(d.getMinutes())}` };
+};
 
 export function CalendarView() {
   const { state, dispatch, goTo, toast, backend, editEvent, setEditEvent } = useApp();
@@ -66,14 +75,15 @@ export function CalendarView() {
 
   const openNew = (day: string, minutes: number | null) => {
     const f = (m: number) => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
-    setDraft({ id: null, calendar: defaultCal, title: '', allDay: minutes === null, day, span: 0, time: f(minutes ?? 9 * 60), dur: 30, repeat: 'none', note: '' });
+    const time = f(minutes ?? 9 * 60), end = plusMin(day, time, 30);
+    setDraft({ id: null, calendar: defaultCal, title: '', allDay: minutes === null, rem: false, day, endDay: minutes === null ? day : end.day, time, endTime: end.time, repeat: 'none', note: '' });
   };
   const openEvent = (e: CalEvent) => {
     const st = new Date(e.start), en = new Date(e.end);
     setDraft({
-      id: e.id, calendar: e.calendar, title: e.title, allDay: e.allDay, note: e.note, repeat: e.repeat ?? 'none',
-      day: e.allDay ? e.start : dayKey(st), span: e.allDay ? daysBetween(e.start, e.end) : 0,
-      time: e.allDay ? '09:00' : hm(st), dur: e.allDay ? 30 : Math.max(5, Math.round((en.getTime() - st.getTime()) / 60_000)),
+      id: e.id, calendar: e.calendar, title: e.title, allDay: e.allDay, rem: !!e.rem, note: e.note, repeat: e.repeat ?? 'none',
+      day: e.allDay ? e.start : dayKey(st), endDay: e.allDay ? e.end : isNaN(en.getTime()) ? dayKey(st) : dayKey(en),
+      time: e.allDay ? '09:00' : hm(st), endTime: e.allDay || isNaN(en.getTime()) ? plusMin(dayKey(st), hm(st), 30).time : hm(en),
     });
   };
   const openItem = (it: CalItem) => {
@@ -143,10 +153,10 @@ export function CalendarView() {
 
   const look = state.settings.calLook;
   const lookVars = {
-    ['--cal-side' as string]: SIDE_COLORS[look.side.color].bg,
-    ['--cal-bg' as string]: BOARD_COLORS[look.bg.color].bg,
-    ['--cal-cell' as string]: CARD_THEMES[look.cell.color].bg,
-    ['--cal-cell-ink' as string]: CARD_THEMES[look.cell.color].ink,
+    ['--cal-side' as string]: sidePalette(look.side.color).bg,
+    ['--cal-bg' as string]: boardPalette(look.bg.color).bg,
+    ['--cal-cell' as string]: cardPalette(look.cell.color).bg,
+    ['--cal-cell-ink' as string]: cardPalette(look.cell.color).ink,
   };
   const [lookOpen, setLookOpen] = useState(false);
   return (
@@ -371,7 +381,7 @@ function useDragMove(onMove: (it: CalItem, days: number, minutes: number) => voi
 function Chip({ it, onDown, dragging }: { it: CalItem; onDown: (e: RPointerEvent) => void; dragging: boolean }) {
   return (
     <div className={'chip-ev ' + it.kind + (it.done ? ' done' : '') + (dragging ? ' ghost' : '')} style={{ ['--c' as string]: it.color }} title={it.kind === 'holiday' ? t('cal.chip.holiday', { title: it.title }) : it.kind === 'reminder' ? t('cal.chip.reminder', { title: it.title }) : it.title} onPointerDown={onDown}>
-      {!it.allDay && it.start && <b>{hm(it.start)}</b>} {it.title}
+      {it.rem && <><Icon name="bell" size={12} /> </>}{!it.allDay && it.start && <b>{hm(it.start)}</b>} {it.title}
     </div>
   );
 }
@@ -392,9 +402,10 @@ function MonthGrid({ items, today, onNew, onOpen, onMove }: { items: CalItem[]; 
       {g.flatMap((d, gi) => {
         const list = onDay(items, d.key);
         const hol = list.some((x) => x.kind === 'holiday');
+        const wholeDay = list.find((x) => x.allDay && x.kind !== 'holiday');
         const shown = list.slice(0, 3);
         const cell = (
-          <div key={d.key} data-day={d.key} className={'cg-cell' + (d.inMonth ? '' : ' out') + (d.key === today ? ' today' : '') + (hol ? ' holiday' : '') + (ghost?.day === d.key ? ' drop' : '')} onClick={(e) => { if (e.target === e.currentTarget) onNew(d.key); }}>
+          <div key={d.key} data-day={d.key} style={wholeDay ? { ['--ad' as string]: wholeDay.color } : undefined} className={'cg-cell' + (d.inMonth ? '' : ' out') + (d.key === today ? ' today' : '') + (hol ? ' holiday' : '') + (wholeDay ? ' has-ad' : '') + (ghost?.day === d.key ? ' drop' : '')} onClick={(e) => { if (e.target === e.currentTarget) onNew(d.key); }}>
             <div className="cg-top">
               <button className="cg-num" title={t('cal.viewDay')} aria-label={t('cal.viewDayKey', { day: d.key })} onClick={(e) => { e.stopPropagation(); goDay(d.key); }}>{fromDayKey(d.key).getDate()}</button>
               <span className="grow" />
@@ -420,6 +431,8 @@ function TimeGrid({ days, items, today, onNew, onOpen, onMove }: { days: string[
   const scroller = useRef<HTMLDivElement>(null);
   const now = new Date();
   const nowTop = (now.getHours() * 60 + now.getMinutes() - dayStart * 60) * PX;
+  // Si el día tiene algo de día completo (que no sea festivo), toda la columna se tiñe con su color.
+  const adColor = (k: string) => { const x = onDay(items, k).find((i) => i.allDay && i.kind !== 'holiday'); return x ? { ['--ad' as string]: x.color } : undefined; };
   return (
     <div className="tgrid" style={{ ['--cols' as string]: days.length }}>
       <div className="tg-head">
@@ -433,7 +446,7 @@ function TimeGrid({ days, items, today, onNew, onOpen, onMove }: { days: string[
       <div className="tg-allday">
         <span className="small muted">{t('cal.allDay')}</span>
         {days.map((k) => (
-          <div key={k} data-day={k} className={'tg-ad' + (ghost?.day === k ? ' drop' : '')}>
+          <div key={k} data-day={k} style={adColor(k)} className={'tg-ad' + (adColor(k) ? ' has-ad' : '') + (ghost?.day === k ? ' drop' : '')}>
             {onDay(items, k).filter((x) => x.allDay).map((it) => <Chip key={it.id + k} it={it} dragging={ghost?.id === it.id} onDown={(e) => start(e, it, () => onOpen(it))} />)}
           </div>
         ))}
@@ -442,7 +455,7 @@ function TimeGrid({ days, items, today, onNew, onOpen, onMove }: { days: string[
         <div className="tg-body" style={{ height: H }}>
           <div className="tg-hours">{hours.map((h) => <span key={h} style={{ top: (h - dayStart) * 60 * PX }}>{formatClock(new Date(2000, 0, 1, h, 0))}</span>)}</div>
           {days.map((k) => (
-            <div key={k} data-day={k} className={'tg-col' + (k === today ? ' today' : '') + (ghost?.day === k ? ' drop' : '')}
+            <div key={k} data-day={k} style={adColor(k)} className={'tg-col' + (k === today ? ' today' : '') + (adColor(k) ? ' has-ad' : '') + (ghost?.day === k ? ' drop' : '')}
               onClick={(e) => {
                 if (e.target !== e.currentTarget) return;
                 const r = e.currentTarget.getBoundingClientRect();
@@ -456,7 +469,7 @@ function TimeGrid({ days, items, today, onNew, onOpen, onMove }: { days: string[
                   <div key={p.item.id} className={'tg-ev ' + p.item.kind + (p.item.done ? ' done' : '') + (g ? ' ghost' : '')}
                     style={{ top: (p.top + (g?.min ?? 0)) * PX, height: Math.max(18, p.height * PX - 2), left: `calc(${(p.col / p.cols) * 100}% + 2px)`, width: `calc(${100 / p.cols}% - 4px)`, ['--c' as string]: p.item.color }}
                     onPointerDown={(e) => start(e, p.item, () => onOpen(p.item))}>
-                    <b>{p.item.kind === 'reminder' ? '🔔 ' : ''}{p.item.title || t('cal.untitled')}</b>
+                    <b>{p.item.kind === 'reminder' ? <><Icon name="bell" size={12} /> </> : ''}{p.item.title || t('cal.untitled')}</b>
                     <span>{p.item.start ? hm(p.item.start) : ''}{p.item.kind === 'event' && p.item.end ? ' – ' + hm(p.item.end) : ''}</span>
                   </div>
                 );
@@ -481,7 +494,7 @@ function Agenda({ from, items, today, onOpen }: { from: string; items: CalItem[]
             <button key={it.id + k} className={'agenda-row ' + it.kind} onClick={() => onOpen(it)} disabled={it.kind === 'holiday'}>
               <span className="dot" style={{ background: it.color }} />
               <span className="agenda-time">{it.allDay ? (it.kind === 'holiday' ? t('cal.holiday') : t('cal.allDay')) : it.start ? hm(it.start) : ''}</span>
-              <span className="grow">{it.kind === 'reminder' ? '🔔 ' : ''}{it.title || t('cal.untitled')}</span>
+              <span className="grow">{it.kind === 'reminder' || it.rem ? <><Icon name="bell" size={13} /> </> : ''}{it.title || t('cal.untitled')}</span>
             </button>
           ))}
         </section>
@@ -500,16 +513,26 @@ function EventDialog({ draft, calendars, onClose }: { draft: Draft; calendars: C
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
   }, [onClose]);
+  // Al mover el inicio, el fin se mueve igual (se conserva la duración).
+  const setStartDay = (day: string) => setD({ ...d, day, endDay: shiftDay(d.endDay, daysBetween(d.day, day)) });
+  const setStartTime = (time: string) => {
+    const a = new Date(`${d.day}T${d.time}`), b = new Date(`${d.day}T${time}`), e = new Date(`${d.endDay}T${d.endTime}`);
+    if (isNaN(a.getTime()) || isNaN(b.getTime()) || isNaN(e.getTime())) { setD({ ...d, time }); return; }
+    const end = plusMin(d.endDay, d.endTime, Math.round((b.getTime() - a.getTime()) / 60_000));
+    setD({ ...d, time, endDay: end.day, endTime: end.time });
+  };
   const save = () => {
     let start: string, end: string;
     if (d.allDay) {
-      start = d.day; end = shiftDay(d.day, d.span);
+      if (d.endDay < d.day) { setErr(t('cal.ev.badEnd')); return; }
+      start = d.day; end = d.endDay;
     } else {
-      const s = new Date(`${d.day}T${d.time}`);
-      if (isNaN(s.getTime())) { setErr(t('cal.ev.badDate')); return; }
-      start = s.toISOString(); end = new Date(s.getTime() + d.dur * 60_000).toISOString();
+      const s = new Date(`${d.day}T${d.time}`), en = new Date(`${d.endDay}T${d.endTime}`);
+      if (isNaN(s.getTime()) || isNaN(en.getTime())) { setErr(t('cal.ev.badDate')); return; }
+      if (en.getTime() <= s.getTime()) { setErr(t('cal.ev.badEnd')); return; }
+      start = s.toISOString(); end = en.toISOString();
     }
-    const ev: CalEvent = { id: d.id ?? uid('ev'), calendar: d.calendar, title: d.title.trim() || t('cal.untitled'), start, end, allDay: d.allDay, note: d.note, repeat: d.repeat };
+    const ev: CalEvent = { id: d.id ?? uid('ev'), calendar: d.calendar, title: d.title.trim() || t('cal.untitled'), start, end, allDay: d.allDay, note: d.note, repeat: d.repeat, rem: d.allDay && d.rem };
     dispatch(d.id ? { t: 'patchEvent', id: d.id, patch: ev } : { t: 'addEvent', event: ev });
     onClose();
   };
@@ -522,24 +545,39 @@ function EventDialog({ draft, calendars, onClose }: { draft: Draft; calendars: C
             <select value={d.calendar} aria-label={t('cal.ev.calendar')} onChange={(e) => { const c = calendars.find((x) => x.id === e.target.value); setD({ ...d, calendar: e.target.value, repeat: c?.kind === 'birthdays' && d.repeat === 'none' ? 'year' : d.repeat, allDay: c?.kind === 'birthdays' ? true : d.allDay }); }}>{calendars.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
           </label>
           <input autoFocus value={d.title} placeholder={t('cal.ev.titlePlaceholder')} aria-label={t('cal.ev.title')} onChange={(e) => setD({ ...d, title: e.target.value })} onKeyDown={(e) => e.key === 'Enter' && save()} />
-          <select value={d.allDay ? 'note' : 'reminder'} aria-label={t('cal.ev.type')} onChange={(e) => setD({ ...d, allDay: e.target.value === 'note' })}>
+          <select value={d.allDay ? (d.rem ? 'dayrem' : 'note') : 'reminder'} aria-label={t('cal.ev.type')}
+            onChange={(e) => {
+              const v = e.target.value, allDay = v !== 'reminder';
+              // Al pasar de día completo a con hora, el fin parte de media hora después del inicio.
+              const end = plusMin(d.day, d.time, 30);
+              setD({ ...d, allDay, rem: v === 'dayrem', ...(allDay === d.allDay ? {} : allDay ? { endDay: d.day } : { endDay: end.day, endTime: end.time }) });
+            }}>
             <option value="reminder">{t('cal.ev.typeReminder')}</option>
+            <option value="dayrem">{t('cal.ev.typeDayReminder')}</option>
             <option value="note">{t('cal.ev.typeNote')}</option>
           </select>
           <div className="row wrap">
             <label className="small">{t('cal.ev.date')}
               <span className="row">
-                <button className="icon-btn small" aria-label={t('cal.prevDay')} onClick={() => setD({ ...d, day: shiftDay(d.day, -1) })}>‹</button>
-                <input type="date" value={d.day} aria-label={t('cal.ev.date')} onChange={(e) => e.target.value && setD({ ...d, day: e.target.value })} />
-                <button className="icon-btn small" aria-label={t('cal.nextDay')} onClick={() => setD({ ...d, day: shiftDay(d.day, 1) })}>›</button>
+                <button className="icon-btn small" aria-label={t('cal.prevDay')} onClick={() => setStartDay(shiftDay(d.day, -1))}>‹</button>
+                <input type="date" value={d.day} aria-label={t('cal.ev.date')} onChange={(e) => e.target.value && setStartDay(e.target.value)} />
+                <button className="icon-btn small" aria-label={t('cal.nextDay')} onClick={() => setStartDay(shiftDay(d.day, 1))}>›</button>
               </span>
             </label>
-            {!d.allDay && <label className="small">{t('cal.ev.time')}<input type="time" value={d.time} step={900} aria-label={t('cal.ev.time')} onChange={(e) => setD({ ...d, time: e.target.value })} /></label>}
+            {!d.allDay && <label className="small">{t('cal.ev.time')}<input type="time" value={d.time} step={900} aria-label={t('cal.ev.time')} onChange={(e) => e.target.value && setStartTime(e.target.value)} /></label>}
             <label className="small">{t('cal.ev.repeat')}
               <select value={d.repeat} aria-label={t('cal.ev.repeat')} onChange={(e) => setD({ ...d, repeat: e.target.value as Repeat })}>
                 <option value="none">{t('cal.ev.never')}</option><option value="week">{t('cal.ev.weekly')}</option><option value="month">{t('cal.ev.monthly')}</option><option value="year">{t('cal.ev.yearly')}</option>
               </select>
             </label>
+          </div>
+          <div className="row wrap">
+            <label className="small">{d.allDay ? t('cal.ev.until') : t('cal.ev.end')}
+              <span className="row">
+                <input type="date" value={d.endDay} min={d.day} aria-label={d.allDay ? t('cal.ev.until') : t('cal.ev.endDate')} onChange={(e) => e.target.value && setD({ ...d, endDay: e.target.value })} />
+              </span>
+            </label>
+            {!d.allDay && <label className="small">{t('cal.ev.endTime')}<input type="time" value={d.endTime} step={900} aria-label={t('cal.ev.endTime')} onChange={(e) => e.target.value && setD({ ...d, endTime: e.target.value })} /></label>}
           </div>
           <textarea rows={3} value={d.note} placeholder={t('cal.ev.notePlaceholder')} aria-label={t('cal.ev.note')} onChange={(e) => setD({ ...d, note: e.target.value })} />
           {err && <p className="err">{err}</p>}

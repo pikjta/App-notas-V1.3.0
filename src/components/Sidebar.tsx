@@ -9,7 +9,8 @@ import { todayKey } from '../lib/store';
 import { DEFAULT_SESSION_FONT, fontCss, normalizeFont, normalizeSide, sideVars } from '../lib/appearance';
 import { FontPanel, SidePanel } from './Appearance';
 import { Icon } from './Icon';
-import { hasIcon, viewIconOf } from '../lib/icons';
+import { hasIcon, normalizeColorIcon, viewIconOf } from '../lib/icons';
+import { ToneGrid } from './ToneGrid';
 import type { ViewIconId } from '../lib/icons';
 
 export function Sidebar() {
@@ -20,6 +21,7 @@ export function Sidebar() {
   const [folderName, setFolderName] = useState('');
   const [renamingFolder, setRenamingFolder] = useState<string | null>(null);
   const [moveMenu, setMoveMenu] = useState<string | null>(null);
+  const [colorMenu, setColorMenu] = useState<string | null>(null);
   const refocus = useRef<string | null>(null);
   const [renamingSession, setRenamingSession] = useState(false);
   const [fontOpen, setFontOpen] = useState(false);
@@ -145,6 +147,14 @@ export function Sidebar() {
           {st.total > 0 && <span className="side-count" title={t('ui.common.doneOf', { done: st.done, total: st.total })}>{st.done}/{st.total}</span>}
         </button>
         <span className="row-actions">
+          <span className="menu-anchor">
+            <button className="icon-btn small" title={t('ui.side.taskColor')} aria-label={t('ui.side.taskColor')} aria-expanded={colorMenu === p.id} onClick={() => setColorMenu(colorMenu === p.id ? null : p.id)}><Icon name={normalizeColorIcon(state.settings.colorIcon)} size={14} /></button>
+            {colorMenu === p.id && (
+              <div className="menu move-menu tone-menu" role="dialog" aria-label={t('ui.side.taskColor')} onMouseLeave={() => setColorMenu(null)}>
+                <ToneGrid value={p.color} onPick={(hex) => { dispatch({ t: 'patchProject', id: p.id, patch: { color: hex } }); setColorMenu(null); }} />
+              </div>
+            )}
+          </span>
           <span className="menu-anchor">
             <button className="icon-btn small" title={t('ui.side.moveToFolder')} aria-label={t('ui.side.moveToFolder')} aria-expanded={moveMenu === p.id} onClick={() => setMoveMenu(moveMenu === p.id ? null : p.id)}><Icon name="folder" size={14} /></button>
             {moveMenu === p.id && (

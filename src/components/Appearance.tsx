@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useApp } from '../App';
-import { AMBIENTS, AMBIENT_IDS, BOARD_COLORS, BOARD_COLOR_IDS, CARD_THEMES, CARD_THEME_IDS, DEFAULT_SESSION_FONT, DEFAULT_SIDE, DEFAULT_THEME, DEFAULT_TITLE_FONT, FONTS, FONT_COLORS, FONT_IDS, SIDE_COLORS, SIDE_COLOR_IDS, TEXTURES, TEXTURE_IDS, WEIGHT_LABEL } from '../lib/appearance';
+import { ColorRow } from './ToneGrid';
+import { AMBIENTS, AMBIENT_IDS, BOARD_COLORS, BOARD_COLOR_IDS, CARD_THEMES, CARD_THEME_IDS, boardPalette, cardPalette, sidePalette, DEFAULT_SESSION_FONT, DEFAULT_SIDE, DEFAULT_THEME, DEFAULT_TITLE_FONT, FONTS, FONT_COLORS, FONT_IDS, SIDE_COLORS, SIDE_COLOR_IDS, TEXTURES, TEXTURE_IDS, WEIGHT_LABEL } from '../lib/appearance';
 import type { FontStyle, FontWeight, FontSize, Texture, Theme } from '../lib/appearance';
 import type { Project } from '../lib/model';
 import { DEFAULT_CALLOOK } from '../lib/model';
@@ -84,8 +85,8 @@ export function SidePanel({ onClose }: { onClose: () => void }) {
   return (
     <Panel title={t('set.ap.customizeSidebar')} scope={t('set.ap.scopeApp')} onClose={onClose} foot={<button className="tool" onClick={() => dispatch({ t: 'settings', patch: { side: DEFAULT_SIDE, iconStyle: DEFAULT_ICON_STYLE, colorIcon: DEFAULT_COLOR_ICON, viewIcons: {} } })}>{t('set.ap.reset')}</button>}>
       <div className="ap-field">
-        <span className="menu-label">{t('set.ap.colorNamed', { name: SIDE_COLORS[side.color].name })}</span>
-        <div className="swatch-row">{SIDE_COLOR_IDS.map((k) => <button key={k} className={'swatch' + (side.color === k ? ' on' : '')} title={SIDE_COLORS[k].name} aria-label={SIDE_COLORS[k].name} style={{ background: SIDE_COLORS[k].bg }} onClick={() => set({ color: k })} />)}</div>
+        <span className="menu-label">{t('set.ap.colorNamed', { name: sidePalette(side.color).name })}</span>
+        <ColorRow ids={SIDE_COLOR_IDS} current={side.color} bg={(k) => SIDE_COLORS[k].bg} name={(k) => SIDE_COLORS[k].name} onPick={(v) => set({ color: v as typeof side.color })} />
       </div>
       <TextureField label={t('set.ap.textureNamed', { name: TEXTURES[side.texture] })} value={side.texture} onChange={(texture) => set({ texture })} />
       <div className="ap-field">
@@ -185,7 +186,7 @@ export function BoardPanel({ project, onClose }: { project: Project; onClose: ()
       <div className="ap-field">
         <span className="menu-label">{t('set.ap.ambients')}</span>
         <Pager items={AMBIENT_IDS} per={6} isCurrent={(k) => AMBIENTS[k].theme.board === theme.board && AMBIENTS[k].theme.texture === theme.texture && AMBIENTS[k].theme.card === theme.card && AMBIENTS[k].theme.cardTexture === theme.cardTexture} gridClass="amb-grid" render={(k) => {
-          const a = AMBIENTS[k]; const b = BOARD_COLORS[a.theme.board]; const c = CARD_THEMES[a.theme.card];
+          const a = AMBIENTS[k]; const b = boardPalette(a.theme.board); const c = cardPalette(a.theme.card);
           return (
             <button key={k} className="amb" aria-label={a.name} onClick={() => set(a.theme)}>
               <span className={'amb-board tex-' + a.theme.texture} style={{ background: b.bg, ['--board-ink' as string]: b.ink }}><i style={{ background: c.bg }} /><i style={{ background: c.bg }} /></span>
@@ -196,9 +197,9 @@ export function BoardPanel({ project, onClose }: { project: Project; onClose: ()
       </div>
       <div className="ap-field">
         <span className="menu-label">{t('set.ap.taskIcon')}</span>
-        <div className="icon-grid" role="group" aria-label={t('set.ap.taskIcon')}>
-          {ICON_KEYS.map((k) => <button key={k} className={'icon-cell' + (project.icon === k ? ' on' : '')} title={iconLabel(k)} aria-label={iconLabel(k)} aria-pressed={project.icon === k} onClick={() => dispatch({ t: 'patchProject', id: project.id, patch: { icon: k } })}><Icon name={k} size={18} /></button>)}
-        </div>
+        <Pager items={ICON_KEYS} per={21} isCurrent={(k) => project.icon === k} gridClass="icon-grid icon-grid-7" render={(k) => (
+          <button key={k} className={'icon-cell' + (project.icon === k ? ' on' : '')} title={iconLabel(k)} aria-label={iconLabel(k)} aria-pressed={project.icon === k} onClick={() => dispatch({ t: 'patchProject', id: project.id, patch: { icon: k } })}><Icon name={k} size={22} /></button>
+        )} />
         <button className={'tool small-btn' + (!project.icon ? ' on' : '')} onClick={() => dispatch({ t: 'patchProject', id: project.id, patch: { icon: null } })}>{t('set.ap.colorDot')}</button>
       </div>
       <div className="tabs ap-tabs" role="tablist">
@@ -208,16 +209,16 @@ export function BoardPanel({ project, onClose }: { project: Project; onClose: ()
       {tab === 'board' ? (
         <>
           <div className="ap-field">
-            <span className="menu-label">{t('set.ap.colorNamed', { name: BOARD_COLORS[theme.board].name })}</span>
-            <div className="swatch-row">{BOARD_COLOR_IDS.map((k) => <button key={k} className={'swatch' + (theme.board === k ? ' on' : '')} title={BOARD_COLORS[k].name} aria-label={BOARD_COLORS[k].name} style={{ background: BOARD_COLORS[k].bg }} onClick={() => set({ board: k })} />)}</div>
+            <span className="menu-label">{t('set.ap.colorNamed', { name: boardPalette(theme.board).name })}</span>
+            <ColorRow ids={BOARD_COLOR_IDS} current={theme.board} bg={(k) => BOARD_COLORS[k].bg} name={(k) => BOARD_COLORS[k].name} onPick={(v) => set({ board: v as Theme['board'] })} />
           </div>
           <TextureField label={t('set.ap.textureNamed', { name: TEXTURES[theme.texture] })} value={theme.texture} onChange={(texture) => set({ texture })} />
         </>
       ) : (
         <>
           <div className="ap-field">
-            <span className="menu-label">{t('set.ap.colorNamed', { name: CARD_THEMES[theme.card].name })}</span>
-            <div className="swatch-row">{CARD_THEME_IDS.map((k) => <button key={k} className={'swatch' + (theme.card === k ? ' on' : '')} title={CARD_THEMES[k].name} aria-label={CARD_THEMES[k].name} style={{ background: CARD_THEMES[k].bg }} onClick={() => set({ card: k })} />)}</div>
+            <span className="menu-label">{t('set.ap.colorNamed', { name: cardPalette(theme.card).name })}</span>
+            <ColorRow ids={CARD_THEME_IDS} current={theme.card} bg={(k) => CARD_THEMES[k].bg} name={(k) => CARD_THEMES[k].name} onPick={(v) => set({ card: v as Theme['card'] })} />
           </div>
           <TextureField label={t('set.ap.textureNamed', { name: TEXTURES[theme.cardTexture] })} value={theme.cardTexture} onChange={(cardTexture) => set({ cardTexture })} />
         </>
@@ -238,18 +239,18 @@ export function CalendarPanel({ onClose }: { onClose: () => void }) {
         {([['side', t('set.ap.calSide')], ['bg', t('set.ap.calBg')], ['cell', t('set.ap.calCells')]] as const).map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>)}
       </div>
       {tab === 'side' && <>
-        <div className="ap-field"><span className="menu-label">{t('set.ap.colorNamed', { name: SIDE_COLORS[look.side.color].name })}</span>
-          <div className="swatch-row">{SIDE_COLOR_IDS.map((k) => <button key={k} className={'swatch' + (look.side.color === k ? ' on' : '')} title={SIDE_COLORS[k].name} aria-label={SIDE_COLORS[k].name} style={{ background: SIDE_COLORS[k].bg }} onClick={() => set({ side: { ...look.side, color: k } })} />)}</div></div>
+        <div className="ap-field"><span className="menu-label">{t('set.ap.colorNamed', { name: sidePalette(look.side.color).name })}</span>
+          <ColorRow ids={SIDE_COLOR_IDS} current={look.side.color} bg={(k) => SIDE_COLORS[k].bg} name={(k) => SIDE_COLORS[k].name} onPick={(v) => set({ side: { ...look.side, color: v as typeof look.side.color } })} /></div>
         <TextureField label={t('set.ap.textureNamed', { name: TEXTURES[look.side.texture] })} value={look.side.texture} onChange={(texture) => set({ side: { ...look.side, texture } })} />
       </>}
       {tab === 'bg' && <>
-        <div className="ap-field"><span className="menu-label">{t('set.ap.colorNamed', { name: BOARD_COLORS[look.bg.color].name })}</span>
-          <div className="swatch-row">{BOARD_COLOR_IDS.map((k) => <button key={k} className={'swatch' + (look.bg.color === k ? ' on' : '')} title={BOARD_COLORS[k].name} aria-label={BOARD_COLORS[k].name} style={{ background: BOARD_COLORS[k].bg }} onClick={() => set({ bg: { ...look.bg, color: k } })} />)}</div></div>
+        <div className="ap-field"><span className="menu-label">{t('set.ap.colorNamed', { name: boardPalette(look.bg.color).name })}</span>
+          <ColorRow ids={BOARD_COLOR_IDS} current={look.bg.color} bg={(k) => BOARD_COLORS[k].bg} name={(k) => BOARD_COLORS[k].name} onPick={(v) => set({ bg: { ...look.bg, color: v as typeof look.bg.color } })} /></div>
         <TextureField label={t('set.ap.textureNamed', { name: TEXTURES[look.bg.texture] })} value={look.bg.texture} onChange={(texture) => set({ bg: { ...look.bg, texture } })} />
       </>}
       {tab === 'cell' && <>
-        <div className="ap-field"><span className="menu-label">{t('set.ap.colorNamed', { name: CARD_THEMES[look.cell.color].name })}</span>
-          <div className="swatch-row">{CARD_THEME_IDS.map((k) => <button key={k} className={'swatch' + (look.cell.color === k ? ' on' : '')} title={CARD_THEMES[k].name} aria-label={CARD_THEMES[k].name} style={{ background: CARD_THEMES[k].bg }} onClick={() => set({ cell: { ...look.cell, color: k } })} />)}</div></div>
+        <div className="ap-field"><span className="menu-label">{t('set.ap.colorNamed', { name: cardPalette(look.cell.color).name })}</span>
+          <ColorRow ids={CARD_THEME_IDS} current={look.cell.color} bg={(k) => CARD_THEMES[k].bg} name={(k) => CARD_THEMES[k].name} onPick={(v) => set({ cell: { ...look.cell, color: v as typeof look.cell.color } })} /></div>
         <TextureField label={t('set.ap.textureNamed', { name: TEXTURES[look.cell.texture] })} value={look.cell.texture} onChange={(texture) => set({ cell: { ...look.cell, texture } })} />
       </>}
     </Panel>

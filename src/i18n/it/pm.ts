@@ -172,6 +172,7 @@ export const pm: Part<typeof Es> = {
   'pm.table.searchPlaceholder': 'Cerca in questa tabella…',
   'pm.table.search': 'Cerca in questa tabella',
   'pm.table.options': 'Opzioni della tabella',
+  'pm.table.resize': 'Trascina per ridimensionare',
   'pm.table.optionsBtn': '⋯ Opzioni',
   'pm.table.close': 'Chiudi',
   'pm.table.closeTip': 'Chiudi (Esc)',

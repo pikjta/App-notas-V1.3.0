@@ -8,7 +8,7 @@ import { arrowBetween } from '../lib/graphics';
 import { readImage } from '../lib/images';
 import { CARD_KIND_LABEL, DEFAULT_THEME, projectName, uid } from '../lib/model';
 import type { Card, CardType, ImageCard, Link, Project } from '../lib/model';
-import { BOARD_COLORS, DEFAULT_TITLE_FONT, cardVars, fontCss, normalizeFont, normalizeTheme } from '../lib/appearance';
+import { DEFAULT_TITLE_FONT, boardPalette, cardVars, fontCss, normalizeFont, normalizeTheme } from '../lib/appearance';
 import { BoardPanel, FontPanel } from './Appearance';
 import { BoardTrash } from './Trash';
 import { ColorPicker } from './ColorPicker';
@@ -105,7 +105,7 @@ export function Board() {
   if (!project) return <main className="board"><div className="empty">{t('ui.board.pickProject')}</div></main>;
 
   const theme = normalizeTheme(project.theme ?? DEFAULT_THEME);
-  const T = BOARD_COLORS[theme.board];
+  const T = boardPalette(theme.board);
   const titleFont = normalizeFont(project.titleFont ?? undefined, DEFAULT_TITLE_FONT);
   const titleCss = fontCss(titleFont, 'title', project.color);
   const rectOf = (c: Card) => ({ x: c.x, y: c.y, w: c.w, h: c.h || heights[c.id] || 200 });

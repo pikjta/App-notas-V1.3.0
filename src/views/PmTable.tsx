@@ -106,6 +106,30 @@ export function PmTable({ cardId, rowId, onClose }: { cardId: string; rowId?: st
     // Los menús no se salen por la derecha de la ventana (el más ancho mide unos 450 px).
     return { x: Math.max(8, Math.min(r.left - m.left, m.width - 460)), y: Math.min(r.bottom - m.top + 4, m.height - 120) };
   };
+  // Tamaño libre de la ventana: se arrastra la esquina inferior derecha (la ventana está centrada, por eso el cambio cuenta doble).
+  const [size, setSizeState] = useState<{ w: number; h: number } | null>(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem('omnia.pmSize') ?? 'null');
+      return v && Number.isFinite(v.w) && Number.isFinite(v.h) ? { w: Math.min(window.innerWidth - 16, Math.max(640, v.w)), h: Math.min(window.innerHeight - 16, Math.max(420, v.h)) } : null;
+    } catch { return null; }
+  });
+  const setSize = (v: { w: number; h: number }) => { setSizeState(v); try { localStorage.setItem('omnia.pmSize', JSON.stringify(v)); } catch { /* sin almacenamiento: el tamaño vale solo mientras está abierta */ } };
+  const startResize = (e: RPointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const el = e.currentTarget;
+    try { el.setPointerCapture?.(e.pointerId); } catch { /* sin captura el arrastre sigue por la ventana */ }
+    const m = modal.current!.getBoundingClientRect();
+    const x0 = e.clientX, y0 = e.clientY, w0 = m.width, h0 = m.height;
+    const mv = (ev: PointerEvent) => setSize({
+      w: Math.round(Math.min(window.innerWidth - 16, Math.max(640, w0 + 2 * (ev.clientX - x0)))),
+      h: Math.round(Math.min(window.innerHeight - 16, Math.max(420, h0 + 2 * (ev.clientY - y0)))),
+    });
+    const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); };
+    window.addEventListener('pointermove', mv);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+  };
   const cellId = (row: string, col: string) => `pm-${row}-${col}`;
 
   const addRow = (after: string | null = null, focusCol?: string) => {
@@ -366,7 +390,7 @@ export function PmTable({ cardId, rowId, onClose }: { cardId: string; rowId?: st
 
   return (
     <div className="modal-back" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <section ref={modal} className="pm-modal" style={{ ['--task' as string]: taskColor }} role="dialog" aria-label={t('pm.table.dialog', { title: card.title || t('pm.untitled') })} onMouseDown={(e) => { if (pop && !(e.target as HTMLElement).closest('.pm-pop, [data-pop]')) setPop(null); }}>
+      <section ref={modal} className="pm-modal" style={{ ['--task' as string]: taskColor, ...(size ? { width: size.w, height: size.h } : {}) }} role="dialog" aria-label={t('pm.table.dialog', { title: card.title || t('pm.untitled') })} onMouseDown={(e) => { if (pop && !(e.target as HTMLElement).closest('.pm-pop, [data-pop]')) setPop(null); }}>
         <header className="pm-head">
           <input className="pm-title" value={card.title} placeholder={t('pm.untitled')} aria-label={t('pm.table.titleLabel')} onChange={(e) => dispatch({ t: 'patchCard', id: card.id, patch: { title: e.target.value } })} />
           {pct !== null && <div className="pm-pct"><div className="progress"><span style={{ width: pct + '%' }} /></div><b>{pct}%</b></div>}
@@ -484,6 +508,7 @@ export function PmTable({ cardId, rowId, onClose }: { cardId: string; rowId?: st
               open={(e) => setPop({ kind: 'cell', col: c.id, row: pageRow.id, ...at(e) })} />} />
         )}
         </div>
+        <div className="pm-resize" role="presentation" title={t('pm.table.resize')} onPointerDown={startResize} />
         {pop && <Popover closeTable={onClose} pop={pop} pm={pm} card={card} close={() => setPop(null)} op={op} rows={rows} archived={archivedCount} openImport={(plan, name) => setPop({ kind: 'import', plan, name, x: 0, y: 0 })} openPage={(id) => { setPage(id); setPop(null); }} openPop={(k, id) => { const x = pop.kind === 'more' ? Math.max(8, (modal.current?.getBoundingClientRect().width ?? 800) - 460) : (pop as { x: number }).x; const y = (pop as { y: number }).y; setPop(k === 'col' ? { kind: 'col', col: id!, x, y } : { kind: k, x, y }); }} />}
       </section>
     </div>
@@ -600,6 +625,14 @@ function FormulaErr({ pm, col, row, error, formula, num }: { pm: Pm; col: Col; r
 }
 
 function Popover({ pop, pm, card, close, closeTable, op, rows, openImport, openPage, openPop }: { closeTable: () => void; openPop: (k: 'props' | 'rules' | 'csv' | 'col', id?: string) => void; pop: Pop; pm: Pm; card: PmCard; close: () => void; op: (o: PmOp) => void; rows: Row[]; archived: number; openImport: (plan: CsvPlan, name: string) => void; openPage: (id: string) => void }) {
+  const box = useRef<HTMLDivElement>(null);
+  // Si el menú se sale por abajo de la ventana (celdas de las últimas filas), se sube hasta que quepa entero.
+  useLayoutEffect(() => {
+    const el = box.current, par = el?.offsetParent as HTMLElement | null;
+    if (!el || !par) return;
+    const over = el.offsetTop + el.offsetHeight - (par.clientHeight - 8);
+    if (over > 0) el.style.top = Math.max(8, el.offsetTop - over) + 'px';
+  });
   const style = pop.kind === 'more' || pop.kind === 'rules' ? { right: 16, top: pop.y } : { left: Math.max(8, pop.x), top: pop.y };
   if (pop.kind === 'import') return <div className="pm-pop menu import" role="dialog" aria-label={t('pm.import.dialog')}><ImportMenu pm={pm} card={card} plan={pop.plan} name={pop.name} close={close} /></div>;
   let body: ReactNode = null;
@@ -616,7 +649,7 @@ function Popover({ pop, pm, card, close, closeTable, op, rows, openImport, openP
   if (pop.kind === 'addcol') body = <AddColMenu pm={pm} op={op} close={close} />;
   if (pop.kind === 'row') body = <RowMenu pm={pm} row={pop.row} op={op} close={close} openPage={openPage} />;
   if (!body || (pop.kind === 'col' && !pm.cols.some((c) => c.id === pop.col)) || (pop.kind === 'cell' && !pm.rows.some((r) => r.id === pop.row))) return null;
-  return <div className={'pm-pop menu ' + pop.kind} style={style}>{body}</div>;
+  return <div ref={box} className={'pm-pop menu ' + pop.kind} style={style}>{body}</div>;
 }
 
 function ColMenu({ col, pm, card, close, op }: { col: Col; pm: Pm; card: PmCard; close: () => void; op: (o: PmOp) => void }) {
