@@ -114,7 +114,7 @@ export function PmTable({ cardId, rowId, onClose }: { cardId: string; rowId?: st
     } catch { return null; }
   });
   const setSize = (v: { w: number; h: number }) => { setSizeState(v); try { localStorage.setItem('omnia.pmSize', JSON.stringify(v)); } catch { /* sin almacenamiento: el tamaño vale solo mientras está abierta */ } };
-  const startResize = (e: RPointerEvent<HTMLDivElement>) => {
+  const startBoxResize = (e: RPointerEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     const el = e.currentTarget;
@@ -508,7 +508,7 @@ export function PmTable({ cardId, rowId, onClose }: { cardId: string; rowId?: st
               open={(e) => setPop({ kind: 'cell', col: c.id, row: pageRow.id, ...at(e) })} />} />
         )}
         </div>
-        <div className="pm-resize" role="presentation" title={t('pm.table.resize')} onPointerDown={startResize} />
+        <div className="pm-resize" role="presentation" title={t('pm.table.resize')} onPointerDown={startBoxResize} />
         {pop && <Popover closeTable={onClose} pop={pop} pm={pm} card={card} close={() => setPop(null)} op={op} rows={rows} archived={archivedCount} openImport={(plan, name) => setPop({ kind: 'import', plan, name, x: 0, y: 0 })} openPage={(id) => { setPage(id); setPop(null); }} openPop={(k, id) => { const x = pop.kind === 'more' ? Math.max(8, (modal.current?.getBoundingClientRect().width ?? 800) - 460) : (pop as { x: number }).x; const y = (pop as { y: number }).y; setPop(k === 'col' ? { kind: 'col', col: id!, x, y } : { kind: k, x, y }); }} />}
       </section>
     </div>
