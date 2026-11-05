@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import css from '../styles/app.css?raw';
+import { readFileSync } from 'node:fs';
 import { setLang } from '../i18n';
 import { AMBIENTS, AMBIENT_IDS, BOARD_COLORS, CARD_THEMES, TEXTURES, TEXTURE_IDS, normalizeTexture } from '../lib/appearance';
+
+const css = readFileSync(new URL('../styles/app.css', import.meta.url), 'utf8');
 
 describe('1.3.0: 24 texturas y 12 ambientes', () => {
   it('hay 24 texturas y las 7 de siempre conservan su sitio', () => {

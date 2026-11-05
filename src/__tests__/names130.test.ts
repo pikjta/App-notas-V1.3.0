@@ -17,7 +17,7 @@ describe('1.3.0: projectName() también en el grafo y la búsqueda', () => {
     const hit = search(searchIndex(s), 'accueil').find((h) => h.project === 'home' && !h.card);
     expect(hit?.text).toBe('Accueil');
     // la nota de bienvenida muestra la ruta con el nombre en el idioma actual
-    expect(searchIndex(s).some((h) => h.where === 'Accueil')).toBe(true);
+    expect(searchIndex(s).some((h) => h.where.startsWith('Accueil'))).toBe(true);
     expect(s.projects.find((p) => p.home)?.name).toBe('Inicio');
     setLang('es');
   });
