@@ -82,7 +82,7 @@ describe('Barra lateral · mover tareas e iconos (mejora 1.1.0, fase 6)', () => 
     await user.click(row().querySelector('.side-item')!);
     await user.click(screen.getByText('Personalizar tablero'));
     const grid = screen.getByRole('group', { name: 'Icono de la tarea' });
-    expect(grid.querySelectorAll('.icon-cell').length).toBeGreaterThan(40);
+    expect(grid.querySelectorAll('.icon-cell').length).toBe(21); // 1.3.0: iconos por páginas (21 por página)
     await user.click(grid.querySelector('.icon-cell')!);
     expect(row().querySelector('.proj-icon svg')).not.toBeNull();
     expect(row().querySelector('.dot')).toBeNull();

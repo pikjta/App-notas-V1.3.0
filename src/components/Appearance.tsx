@@ -138,12 +138,12 @@ export function SidePanel({ onClose }: { onClose: () => void }) {
 }
 
 /** Selector con páginas (1.3.0): flechas a los lados, puntos debajo y `per` elementos por página. Abre en la página del elemento elegido. */
-function Pager<T>({ items, per, isCurrent, gridClass, render }: { items: T[]; per: number; isCurrent: (item: T) => boolean; gridClass: string; render: (item: T) => ReactNode }) {
+function Pager<T>({ items, per, isCurrent, gridClass, render, label }: { items: T[]; per: number; isCurrent: (item: T) => boolean; gridClass: string; render: (item: T) => ReactNode; label?: string }) {
   const pages = Math.max(1, Math.ceil(items.length / per));
   const [page, setPage] = useState(() => Math.max(0, Math.min(pages - 1, Math.floor(items.findIndex(isCurrent) / per))));
   const go = (n: number) => setPage(Math.max(0, Math.min(pages - 1, n)));
   return (
-    <div className="pager">
+    <div className="pager" role={label ? 'group' : undefined} aria-label={label}>
       <div className="pager-row">
         <button type="button" className="pager-arrow" aria-label={t('cal.prev')} title={t('cal.prev')} disabled={page === 0} onClick={() => go(page - 1)}>‹</button>
         <div className={gridClass}>{items.slice(page * per, page * per + per).map(render)}</div>
@@ -197,7 +197,7 @@ export function BoardPanel({ project, onClose }: { project: Project; onClose: ()
       </div>
       <div className="ap-field">
         <span className="menu-label">{t('set.ap.taskIcon')}</span>
-        <Pager items={ICON_KEYS} per={21} isCurrent={(k) => project.icon === k} gridClass="icon-grid icon-grid-7" render={(k) => (
+        <Pager items={ICON_KEYS} per={21} isCurrent={(k) => project.icon === k} gridClass="icon-grid icon-grid-7" label={t('set.ap.taskIcon')} render={(k) => (
           <button key={k} className={'icon-cell' + (project.icon === k ? ' on' : '')} title={iconLabel(k)} aria-label={iconLabel(k)} aria-pressed={project.icon === k} onClick={() => dispatch({ t: 'patchProject', id: project.id, patch: { icon: k } })}><Icon name={k} size={22} /></button>
         )} />
         <button className={'tool small-btn' + (!project.icon ? ' on' : '')} onClick={() => dispatch({ t: 'patchProject', id: project.id, patch: { icon: null } })}>{t('set.ap.colorDot')}</button>
