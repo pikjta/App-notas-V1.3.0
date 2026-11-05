@@ -22,6 +22,8 @@ export type CalItem = {
   /** Recordatorios: tarea principal a la que pertenecen. */
   project?: string;
   done?: boolean;
+  /** Evento «Recordatorio · sin hora» (se dibuja con la campana). */
+  rem?: boolean;
 };
 
 export function monthGrid(anchor: string, weekStart: 0 | 1): { key: string; inMonth: boolean }[] {
@@ -88,7 +90,7 @@ export function itemsBetween(s: State, from: string, to: string): CalItem[] {
     for (const sh of shifts) {
       if (e.allDay) {
         const a = dayKey(sh(fromDayKey(e.start))), b = dayKey(sh(fromDayKey(e.end)));
-        if (inRange(a, b)) out.push({ id: e.id, kind: 'event', title: e.title, color: cal.color, allDay: true, startDay: a, endDay: b, start: null, end: null, calendar: cal.id });
+        if (inRange(a, b)) out.push({ id: e.id, kind: 'event', title: e.title, color: cal.color, allDay: true, startDay: a, endDay: b, start: null, end: null, calendar: cal.id, ...(e.rem ? { rem: true } : {}) });
       } else {
         const st = sh(new Date(e.start)), en0 = new Date(e.end);
         if (isNaN(st.getTime())) continue;

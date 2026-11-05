@@ -13,7 +13,7 @@ export type Doc = { id: string; kind: string; parent: string | null; pos: number
 /** Flecha entre dos tarjetas del mismo tablero. */
 export type Link = { id: string; from: string; to: string; label: string; color: string | null; both: boolean };
 
-import type { BoardColor, CardTheme, SideColor, Texture } from './appearance';
+import type { BoardColorValue, CardThemeValue, SideColorValue, Texture } from './appearance';
 import { DEFAULT_SESSION_FONT, DEFAULT_SIDE, DEFAULT_THEME, normalizeFont, normalizeSide, normalizeTheme } from './appearance';
 import type { FontStyle, SideStyle, Theme } from './appearance';
 export type { Theme } from './appearance';
@@ -137,9 +137,9 @@ export type CalendarKind = 'main' | 'birthdays' | 'holidays' | 'user';
 export type Calendar = { id: string; name: string; color: string; kind: CalendarKind; visible: boolean; pos: number };
 /** Evento de calendario. Si `allDay`, `start` y `end` son «AAAA-MM-DD» (fin incluido); si no, fechas ISO. */
 export type Repeat = 'none' | 'week' | 'month' | 'year';
-export type CalEvent = { id: string; calendar: string; title: string; start: string; end: string; allDay: boolean; note: string; repeat?: Repeat };
+export type CalEvent = { id: string; calendar: string; title: string; start: string; end: string; allDay: boolean; note: string; repeat?: Repeat; /** 1.3.0: «Recordatorio · sin hora» (solo fecha, de día completo). */ rem?: boolean };
 /** Apariencia del calendario (solo afecta a esa pantalla). */
-export type CalLook = { side: { color: SideColor; texture: Texture }; bg: { color: BoardColor; texture: Texture }; cell: { color: CardTheme; texture: Texture } };
+export type CalLook = { side: { color: SideColorValue; texture: Texture }; bg: { color: BoardColorValue; texture: Texture }; cell: { color: CardThemeValue; texture: Texture } };
 export const DEFAULT_CALLOOK: CalLook = { side: { color: 'papel', texture: 'liso' }, bg: { color: 'papel', texture: 'liso' }, cell: { color: 'blanco', texture: 'liso' } };
 
 export const CAL_COLORS = ['#2F6690', '#0E7C7B', '#5E7A2E', '#C08A1E', '#B4532A', '#C8372D', '#D9468F', '#7A3E6B', '#6B645A'];
@@ -261,7 +261,7 @@ export function fromDocs(docs: Doc[]): { projects: Project[]; cards: Card[]; set
     else if (d.kind === 'tags') tags = Array.isArray((data as { tags?: Opt[] }).tags) ? (data as { tags: Opt[] }).tags : [];
     else if (d.kind === 'folder') folders.push({ name: String(data.name ?? ''), collapsed: !!data.collapsed, id: d.id, pos: d.pos });
     else if (d.kind === 'calendar') calendars.push({ ...(data as Omit<Calendar, 'id' | 'pos'>), id: d.id, pos: d.pos });
-    else if (d.kind === 'event' && d.parent) { const e = data as Partial<CalEvent>; events.push({ title: e.title ?? '', start: e.start ?? '', end: e.end ?? e.start ?? '', allDay: !!e.allDay, note: e.note ?? '', repeat: e.repeat ?? 'none', id: d.id, calendar: d.parent }); }
+    else if (d.kind === 'event' && d.parent) { const e = data as Partial<CalEvent>; events.push({ title: e.title ?? '', start: e.start ?? '', end: e.end ?? e.start ?? '', allDay: !!e.allDay, note: e.note ?? '', repeat: e.repeat ?? 'none', ...(e.rem ? { rem: true } : {}), id: d.id, calendar: d.parent }); }
   }
   // 1.2.1: el calendario principal y el nombre de sesión que seguían con el nombre antiguo pasan a OMNIA (si el usuario los renombró, no se tocan).
   if (renameMain) for (const c of calendars) if (c.id === 'cal-main' && c.name === 'Cuaderno') c.name = 'OMNIA';

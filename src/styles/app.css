@@ -278,7 +278,7 @@ label.tool { display: inline-flex; align-items: center; cursor: pointer; }
 .sw-act { position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 6px; border: 0; background: rgba(255, 253, 248, 0.9); color: #1f1d1a; display: grid; place-items: center; font-size: 12px; cursor: pointer; opacity: 0; }
 .sw-act.right { left: auto; right: 4px; color: var(--danger); }
 .sw:hover .sw-act { opacity: 1; }
-.sw-add { height: 76px; border-radius: 10px; border: 1.5px dashed var(--card-muted); display: grid; place-items: center; color: var(--card-muted); font-size: 22px; cursor: pointer; }
+.sw-add { background: none; padding: 0; height: 76px; border-radius: 10px; border: 1.5px dashed var(--card-muted); display: grid; place-items: center; color: var(--card-muted); font-size: 22px; cursor: pointer; }
 
 /* Enlaces [[ ]] */
 .wiki { border: 0; background: none; padding: 0; font: inherit; color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
@@ -415,6 +415,7 @@ label.tool { display: inline-flex; align-items: center; cursor: pointer; }
 .tg-hours span:first-child { transform: none; }
 .tg-col { position: relative; border-left: 1px solid var(--card-line); cursor: cell; }
 .tg-col.today { background: color-mix(in srgb, var(--accent) 4%, transparent); }
+.tg-col.has-ad, .tg-ad.has-ad { background: color-mix(in srgb, var(--ad) 16%, transparent); }
 .tg-col.drop { box-shadow: inset 0 0 0 2px var(--accent); }
 .tg-line { position: absolute; left: 0; right: 0; border-top: 1px solid color-mix(in srgb, var(--card-line) 70%, transparent); pointer-events: none; }
 .tg-now { position: absolute; left: 0; right: 0; border-top: 2px solid #e5484d; z-index: 2; pointer-events: none; }
@@ -486,6 +487,8 @@ label.tool { display: inline-flex; align-items: center; cursor: pointer; }
 .pm-total-fn.hint { opacity: 0; }
 .pm-total-cell:hover .pm-total-fn.hint { opacity: 1; }
 .pm-total { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
+.pm-resize { position: absolute; right: 0; bottom: 0; width: 20px; height: 20px; cursor: nwse-resize; z-index: 60; touch-action: none; background: linear-gradient(135deg, transparent 50%, var(--card-muted) 50%, var(--card-muted) 58%, transparent 58%, transparent 70%, var(--card-muted) 70%, var(--card-muted) 78%, transparent 78%); border-bottom-right-radius: 20px; opacity: 0.7; }
+.pm-resize:hover { opacity: 1; }
 .pm-pop { position: absolute; z-index: 50; width: 320px; max-height: 70vh; overflow: auto; gap: 2px; }
 .pm-pop.filter, .pm-pop.sort { width: 560px; }
 .pm-pop.rules { width: 560px; max-width: calc(100% - 32px); }
@@ -759,7 +762,7 @@ label.tool { display: inline-flex; align-items: center; cursor: pointer; }
 /* ---------- 1.3.0: selector con páginas (flechas y puntos) para texturas y ambientes ---------- */
 .pager { display: flex; flex-direction: column; gap: 8px; }
 .pager-row { display: flex; align-items: center; gap: 4px; }
-.pager-row > .tex-grid, .pager-row > .amb-grid { flex: 1; min-width: 0; }
+.pager-row > .tex-grid, .pager-row > .amb-grid, .pager-row > .icon-grid { flex: 1; min-width: 0; }
 .pager-arrow { flex: none; width: 22px; height: 40px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--card-muted); font-size: 24px; line-height: 1; }
 .pager-arrow:hover:not(:disabled) { color: var(--card-ink); background: var(--card-soft); }
 .pager-arrow:disabled { opacity: 0.25; cursor: default; }
@@ -875,7 +878,8 @@ label.tool { display: inline-flex; align-items: center; cursor: pointer; }
 a.ext{color:#2F6690;text-decoration:underline;cursor:default}
 .hashtag{background:var(--card-soft);border-radius:6px;padding:0 5px;font-size:.92em}
 .stats .late b{color:#C8372D}
-.bell{background:none;border:0;cursor:pointer;font-size:16px}
+.bell{background:none;border:0;cursor:pointer;font-size:16px;color:inherit}
+.bell .bell-off{opacity:.35}
 .cal-view{background:var(--cal-bg,transparent)}
 .cal-view .cal-side{background:var(--cal-side,transparent);border-radius:14px;padding:10px}
 .cal-view .month-cell{background:var(--cal-cell,transparent);color:var(--cal-cell-ink,inherit)}
@@ -1081,6 +1085,7 @@ button.pm-formula.err { border: 0; background: transparent; font: inherit; width
 .cg-cell { min-height: 106px; border-radius: 12px; background: var(--cal-cell, var(--card-bg)); color: var(--cal-cell-ink, var(--card-ink)); border: 1.5px solid var(--card-line); padding: 7px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; min-width: 0; cursor: cell; }
 .cg-cell.out { opacity: 0.45; }
 .cg-cell.holiday { background: linear-gradient(rgba(200, 55, 45, 0.1), rgba(200, 55, 45, 0.1)), var(--cal-cell, var(--card-bg)); border-color: rgba(200, 55, 45, 0.5); }
+.cg-cell.has-ad { background: linear-gradient(color-mix(in srgb, var(--ad) 18%, transparent), color-mix(in srgb, var(--ad) 18%, transparent)), var(--cal-cell, var(--card-bg)); border-color: color-mix(in srgb, var(--ad) 55%, var(--card-line)); }
 .cg-cell.drop { background: color-mix(in srgb, var(--accent) 12%, var(--card-bg)); border-color: var(--accent); }
 .cg-top { display: flex; align-items: center; gap: 2px; margin: -4px -4px 0; }
 .cg-num { min-width: 26px; height: 26px; border: 0; border-radius: 13px; background: transparent; color: inherit; font: inherit; font-size: 13px; font-weight: 600; padding: 0 4px; margin: 4px 0 0 4px; cursor: pointer; }
@@ -1108,3 +1113,15 @@ button.pm-formula.err { border: 0; background: transparent; font: inherit; width
 .card.selected { outline: 2px solid var(--accent); outline-offset: 3px; }
 .copied-pop { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); z-index: 5; pointer-events: none; padding: 6px 14px; border-radius: 999px; background: var(--card-ink); color: var(--card-bg); font-size: 12.5px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 18px rgba(20, 15, 10, 0.3); animation: copied-pop 1.2s ease both; }
 @keyframes copied-pop { 0% { opacity: 0; transform: translate(-50%, 6px) scale(0.9); } 15% { opacity: 1; transform: translate(-50%, 0) scale(1); } 75% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -8px) scale(0.98); } }
+
+/* 1.3.0 · iconos de tarea por páginas (7 × 3), colores en una línea y cuadrícula de tonos */
+.icon-grid.icon-grid-7 { grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.icon-grid.icon-grid-7 .icon-cell { height: 42px; }
+.swatch-row.one-line { gap: 6px; }
+.swatch.tone-open { display: grid; place-items: center; color: #fff; background: conic-gradient(#e5383b, #f4a300, #2fb344, #2f6fed, #a24bd6, #e5383b); }
+.tone-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; margin-top: 8px; }
+.tone { aspect-ratio: 1; min-width: 0; padding: 0; border-radius: 5px; border: 1px solid rgba(0, 0, 0, 0.15); cursor: pointer; }
+.tone:hover { transform: scale(1.12); }
+.tone.on { box-shadow: 0 0 0 2px var(--card-bg), 0 0 0 4px var(--card-ink); }
+.tone-menu { width: 244px; padding: 10px; gap: 0; }
+.tone-menu .tone-grid { margin-top: 0; }

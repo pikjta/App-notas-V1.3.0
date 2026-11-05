@@ -58,7 +58,11 @@ export const normalizeTexture = (t: unknown): Texture => (typeof t === 'string' 
 // ---------------------------------------------------------------------------------------------
 // Tablero y tarjetas
 
-export type BoardColor = 'papel' | 'hueso' | 'arena' | 'niebla' | 'lavanda' | 'noche' | 'abismo';
+/** 1.3.0: color libre elegido en la cuadrícula de tonos («#RRGGBB»); se guarda tal cual en el tema / la barra. */
+export type HexColor = `#${string}`;
+export const isHexColor = (c: unknown): c is HexColor => typeof c === 'string' && /^#[0-9A-Fa-f]{6}$/.test(c);
+export type BoardColor = 'papel' | 'hueso' | 'arena' | 'niebla' | 'lavanda' | 'noche' | 'abismo' | 'crema' | 'menta' | 'cielo' | 'salvia' | 'arcilla';
+export type BoardColorValue = BoardColor | HexColor;
 type Palette = { name: string; bg: string; ink: string; muted: string; line: string; dark: boolean };
 const pal = (name: Key, bg: string, ink: string): Palette => {
   const dark = isDark(bg);
@@ -72,12 +76,25 @@ export const BOARD_COLORS: Record<BoardColor, Palette> = {
   lavanda: pal('set.boardColor.lavanda', '#E4DEEE', '#262033'),
   noche: pal('set.c.noche', '#1E1B26', '#F1EEF6'),
   abismo: pal('set.boardColor.abismo', '#0F1B2A', '#E8EEF5'),
+  // 1.3.0: más colores (se añaden al final: los guardados no cambian).
+  crema: pal('set.c.crema', '#F3E8D0', '#2B2219'),
+  menta: pal('set.c.menta', '#DCEBE1', '#16291F'),
+  cielo: pal('set.c.cielo', '#DDE9F3', '#142536'),
+  salvia: pal('set.sideColor.salvia', '#D3DDCB', '#1F2A1C'),
+  arcilla: pal('set.sideColor.arcilla', '#EBD5CC', '#33201A'),
 };
 export const BOARD_COLOR_IDS = Object.keys(BOARD_COLORS) as BoardColor[];
 const OLD_BOARD: Record<string, BoardColor> = { lino: 'hueso', salvia: 'niebla', pizarra: 'abismo' };
-export const normalizeBoardColor = (c: unknown): BoardColor => (typeof c === 'string' && c in BOARD_COLORS ? (c as BoardColor) : OLD_BOARD[String(c)] ?? 'papel');
+export const normalizeBoardColor = (c: unknown): BoardColorValue => (isHexColor(c) ? (c.toUpperCase() as HexColor) : typeof c === 'string' && c in BOARD_COLORS ? (c as BoardColor) : OLD_BOARD[String(c)] ?? 'papel');
+/** Paleta del tablero: una de las de siempre o la de un color libre (con texto legible encima). */
+export function boardPalette(c: BoardColorValue): Palette {
+  if (!isHexColor(c)) return BOARD_COLORS[c];
+  const ink = inkFor(c), dark = isDark(c);
+  return { name: c.toUpperCase(), bg: c, ink, muted: mix(c, ink, 0.62), line: mix(c, ink, dark ? 0.2 : 0.12), dark };
+}
 
-export type CardTheme = 'papel' | 'blanco' | 'crema' | 'menta' | 'cielo' | 'grafito' | 'marino';
+export type CardTheme = 'papel' | 'blanco' | 'crema' | 'menta' | 'cielo' | 'grafito' | 'marino' | 'salvia' | 'arcilla' | 'lavanda' | 'ocre' | 'tinta';
+export type CardThemeValue = CardTheme | HexColor;
 export const CARD_THEMES: Record<CardTheme, { name: string; bg: string; ink: string; dark: boolean }> = {
   papel: named('set.c.papel', { bg: '#FFFDF8', ink: '#1F1D1A', dark: false }),
   blanco: named('set.cardTheme.blanco', { bg: '#FFFFFF', ink: '#1F1D1A', dark: false }),
@@ -86,12 +103,22 @@ export const CARD_THEMES: Record<CardTheme, { name: string; bg: string; ink: str
   cielo: named('set.c.cielo', { bg: '#E1EEF8', ink: '#142536', dark: false }),
   grafito: named('set.cardTheme.grafito', { bg: '#2A2D31', ink: '#EEF0F2', dark: true }),
   marino: named('set.cardTheme.marino', { bg: '#1B2A44', ink: '#E8EEF8', dark: true }),
+  // 1.3.0: más colores (al final).
+  salvia: named('set.sideColor.salvia', { bg: '#E4ECDD', ink: '#1F2A1C', dark: false }),
+  arcilla: named('set.sideColor.arcilla', { bg: '#F4E1DA', ink: '#33201A', dark: false }),
+  lavanda: named('set.boardColor.lavanda', { bg: '#ECE7F5', ink: '#262033', dark: false }),
+  ocre: named('set.c.ocre', { bg: '#F6E4B8', ink: '#2E2410', dark: false }),
+  tinta: named('set.c.tinta', { bg: '#22262C', ink: '#EEF0F2', dark: true }),
 };
 export const CARD_THEME_IDS = Object.keys(CARD_THEMES) as CardTheme[];
-export const normalizeCardTheme = (c: unknown): CardTheme => (typeof c === 'string' && c in CARD_THEMES ? (c as CardTheme) : 'papel');
+export const normalizeCardTheme = (c: unknown): CardThemeValue => (isHexColor(c) ? (c.toUpperCase() as HexColor) : typeof c === 'string' && c in CARD_THEMES ? (c as CardTheme) : 'papel');
+/** Tema de tarjeta: uno de los de siempre o un color libre. */
+export function cardPalette(c: CardThemeValue): { name: string; bg: string; ink: string; dark: boolean } {
+  return isHexColor(c) ? { name: c.toUpperCase(), bg: c, ink: inkFor(c), dark: isDark(c) } : CARD_THEMES[c];
+}
 
 /** Apariencia del tablero de una tarea principal. */
-export type Theme = { board: BoardColor; texture: Texture; card: CardTheme; cardTexture: Texture };
+export type Theme = { board: BoardColorValue; texture: Texture; card: CardThemeValue; cardTexture: Texture };
 export const DEFAULT_THEME: Theme = { board: 'papel', texture: 'puntos', card: 'papel', cardTexture: 'liso' };
 export const normalizeTheme = (t: Partial<Record<keyof Theme, unknown>> | undefined | null): Theme => ({
   board: normalizeBoardColor(t?.board), texture: t?.texture === undefined ? DEFAULT_THEME.texture : normalizeTexture(t.texture),
@@ -155,7 +182,7 @@ export function inkFor(bg: string): string {
 
 /** Variables de color de una tarjeta: su color propio (o el del tablero) y un texto legible encima. */
 export function cardVars(color: string | null, theme: Theme): Record<string, string> {
-  const base = CARD_THEMES[theme.card];
+  const base = cardPalette(theme.card);
   const bg = color ?? base.bg;
   const ink = color ? inkFor(bg) : base.ink;
   const dark = isDark(bg);
@@ -168,7 +195,8 @@ export function cardVars(color: string | null, theme: Theme): Record<string, str
 // ---------------------------------------------------------------------------------------------
 // Barra lateral
 
-export type SideColor = 'papel' | 'salvia' | 'arcilla' | 'ocre' | 'tinta' | 'cobalto' | 'bosque';
+export type SideColor = 'papel' | 'salvia' | 'arcilla' | 'ocre' | 'tinta' | 'cobalto' | 'bosque' | 'cielo' | 'menta' | 'lavanda' | 'noche' | 'arena';
+export type SideColorValue = SideColor | HexColor;
 export const SIDE_COLORS: Record<SideColor, { name: string; bg: string }> = {
   papel: named('set.c.papel', { bg: '#E8E1D3' }),
   salvia: named('set.sideColor.salvia', { bg: '#C9D4C3' }),
@@ -177,15 +205,23 @@ export const SIDE_COLORS: Record<SideColor, { name: string; bg: string }> = {
   tinta: named('set.c.tinta', { bg: '#24211E' }),
   cobalto: named('set.c.cobalto', { bg: '#1F3F7A' }),
   bosque: named('set.c.bosque', { bg: '#1F3A2E' }),
+  // 1.3.0: más colores (al final).
+  cielo: named('set.c.cielo', { bg: '#B9CFE3' }),
+  menta: named('set.c.menta', { bg: '#BFE0CC' }),
+  lavanda: named('set.boardColor.lavanda', { bg: '#CFC6E3' }),
+  noche: named('set.c.noche', { bg: '#1E1B26' }),
+  arena: named('set.c.arena', { bg: '#E6D3B0' }),
 };
 export const SIDE_COLOR_IDS = Object.keys(SIDE_COLORS) as SideColor[];
-export type SideStyle = { color: SideColor; texture: Texture };
+export type SideStyle = { color: SideColorValue; texture: Texture };
 export const DEFAULT_SIDE: SideStyle = { color: 'tinta', texture: 'liso' };
 export const normalizeSide = (s: Partial<SideStyle> | undefined): SideStyle => ({
-  color: s?.color && s.color in SIDE_COLORS ? s.color : DEFAULT_SIDE.color, texture: normalizeTexture(s?.texture ?? 'liso'),
+  color: isHexColor(s?.color) ? (s!.color!.toUpperCase() as HexColor) : s?.color && s.color in SIDE_COLORS ? s.color : DEFAULT_SIDE.color, texture: normalizeTexture(s?.texture ?? 'liso'),
 });
+/** Color de fondo y nombre de la barra lateral: uno de los de siempre o un color libre. */
+export const sidePalette = (c: SideColorValue): { name: string; bg: string } => (isHexColor(c) ? { name: c.toUpperCase(), bg: c } : SIDE_COLORS[c]);
 export function sideVars(s: SideStyle): Record<string, string> {
-  const bg = SIDE_COLORS[s.color].bg;
+  const bg = sidePalette(s.color).bg;
   const ink = isDark(bg) ? '#F3EEE6' : '#24211E';
   return { ['--side-bg']: bg, ['--side-ink']: ink, ['--side-muted']: mix(bg, ink, 0.6), ['--side-line']: mix(bg, ink, 0.18), ['--side-soft']: mix(bg, ink, 0.1) };
 }

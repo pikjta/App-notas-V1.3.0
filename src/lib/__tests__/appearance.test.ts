@@ -6,7 +6,7 @@ import type { Project } from '../model';
 describe('apariencia (etapa 6)', () => {
   it('la maqueta define 6 ambientes (1.3.0: 12), 7 colores de tablero, 7 texturas (1.3.0: 24) y 12 fuentes', () => {
     expect(AMBIENT_IDS.map((k) => AMBIENTS[k].name)).toEqual(['Estudio', 'Cuaderno', 'Acuarela', 'Risografía', 'Noche', 'Taller', 'Ingeniería', 'Artesanía', 'Cielo', 'Medianoche', 'Lino', 'Jardín']);
-    expect(Object.values(BOARD_COLORS).map((c) => c.name)).toEqual(['Papel', 'Blanco roto', 'Arena', 'Niebla', 'Lavanda', 'Noche', 'Abismo']);
+    expect(Object.values(BOARD_COLORS).map((c) => c.name)).toEqual(['Papel', 'Blanco roto', 'Arena', 'Niebla', 'Lavanda', 'Noche', 'Abismo', 'Crema', 'Menta', 'Cielo', 'Salvia', 'Rosa arcilla']); // 1.3.0: 5 más al final
     expect(TEXTURE_IDS).toHaveLength(24);
     expect(TEXTURE_IDS.slice(0, 7)).toEqual(['liso', 'puntos', 'cuadricula', 'cuaderno', 'lienzo', 'diagonal', 'acuarela']);
     expect(FONT_IDS).toHaveLength(12);
