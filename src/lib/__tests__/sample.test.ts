@@ -6,13 +6,15 @@ import { emptyState, reduce, search, searchIndex } from '../store';
 import { cellText, setWorld, tableProgress, visibleRows } from '../pm';
 import type { PmCard } from '../model';
 
+const ymd = (n: number) => { const t = new Date(); const d = new Date(t.getFullYear(), t.getMonth(), t.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+
 describe('datos de ejemplo de la maqueta', () => {
   const d = fromDocs(sampleDocs());
   const s = reduce(emptyState, { t: 'load', ...d }).state;
   it('trae las tareas principales, calendarios y etiquetas del doc', () => {
-    expect(s.projects.filter((p) => !p.hidden).map((p) => p.name)).toEqual(['Mi espacio', 'Mudanza de octubre', 'Curso de fotografía', 'Casa · semana', 'Diseño de mi app', 'Encargo · Mural Café Aurora']);
+    expect(s.projects.filter((p) => !p.hidden).map((p) => p.name)).toEqual(['Mi espacio', 'Mudanza', 'Curso de fotografía', 'Casa · semana', 'Encargo · Mural Café Aurora']);
     expect(s.folders.map((f) => f.name)).toEqual(['Casa y vida', 'Aprendizaje']);
-    expect(s.cards.filter((c) => c.type === 'note' && c.day).map((c) => (c as { day: string }).day)).toEqual(['2026-09-25', '2026-09-27', '2026-09-28']);
+    expect(s.cards.filter((c) => c.type === 'note' && c.day).map((c) => (c as { day: string }).day)).toEqual([-5, -3, -1].map(ymd)); // 1.3.0: fechas relativas al día de instalación
     expect(s.tags).toHaveLength(5);
     expect(s.events.find((e) => e.id === 'e1')!.repeat).toBe('year');
   });
@@ -24,7 +26,7 @@ describe('datos de ejemplo de la maqueta', () => {
     const px5 = pm.rows.find((r) => r.id === 'px5')!;
     // 2400 € de presupuesto − (180 + 40 + 220 + 12) € de materiales
     expect(cellText(pm, margen, px5, s.tags).replace(/\D/g, '')).toContain('1948');
-    expect(visibleRows(pm, s.tags, '2026-09-28', '').length).toBe(7);
+    expect(visibleRows(pm, s.tags, ymd(0), '').length).toBe(7);
     expect(tableProgress(pm)).toBeGreaterThanOrEqual(0);
   });
   it('el buscador y el grafo encuentran el contenido', () => {

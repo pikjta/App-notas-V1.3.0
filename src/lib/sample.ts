@@ -12,9 +12,6 @@ import { dailyId } from './store';
 const s = (key: string, vars?: Vars): string => t(key as Key, vars);
 
 const STROKES: Stroke[] = [{"c":"#1F1D1A","s":3,"p":[[20.0,200.0],[29.0,194.9],[38.0,190.0],[47.0,185.4],[56.0,181.2],[65.0,177.5],[74.0,174.4],[83.0,172.1],[92.0,170.5],[101.0,169.8],[110.0,169.8],[119.0,170.8],[128.0,172.5],[137.0,174.9],[146.0,178.0],[155.0,181.6],[164.0,185.7],[173.0,190.1],[182.0,194.6],[191.0,199.2],[200.0,203.7],[209.0,207.9],[218.0,211.7],[227.0,215.0],[236.0,217.6],[245.0,219.6],[254.0,220.8],[263.0,221.2],[272.0,220.8],[281.0,219.5],[290.0,217.4],[299.0,214.6],[308.0,211.2],[317.0,207.1],[326.0,202.6],[335.0,197.8],[344.0,192.8],[353.0,187.7],[362.0,182.7],[371.0,177.9],[380.0,173.5]],"o":1},{"c":"#1F1D1A","s":2,"p":[[20.0,213.2],[29.0,211.8],[38.0,211.1],[47.0,211.1],[56.0,212.0],[65.0,213.5],[74.0,215.7],[83.0,218.4],[92.0,221.4],[101.0,224.7],[110.0,228.0],[119.0,231.1],[128.0,233.9],[137.0,236.2],[146.0,237.8],[155.0,238.8],[164.0,239.0],[173.0,238.4],[182.0,237.1],[191.0,235.1],[200.0,232.6],[209.0,229.6],[218.0,226.4],[227.0,223.1],[236.0,219.9],[245.0,217.0],[254.0,214.5],[263.0,212.7],[272.0,211.5],[281.0,211.0],[290.0,211.3],[299.0,212.4],[308.0,214.2],[317.0,216.5],[326.0,219.4],[335.0,222.5],[344.0,225.8],[353.0,229.0],[362.0,232.1],[371.0,234.7],[380.0,236.8]],"o":1},{"c":"#F28C38","s":4,"p":[[334.0,80.0],[333.5,85.9],[331.9,91.6],[329.4,97.0],[326.0,101.9],[321.9,106.0],[317.0,109.4],[311.6,111.9],[305.9,113.5],[300.0,114.0],[294.1,113.5],[288.4,111.9],[283.0,109.4],[278.1,106.0],[274.0,101.9],[270.6,97.0],[268.1,91.6],[266.5,85.9],[266.0,80.0],[266.5,74.1],[268.1,68.4],[270.6,63.0],[274.0,58.1],[278.1,54.0],[283.0,50.6],[288.4,48.1],[294.1,46.5],[300.0,46.0],[305.9,46.5],[311.6,48.1],[317.0,50.6],[321.9,54.0],[326.0,58.1],[329.4,63.0],[331.9,68.4],[333.5,74.1],[334.0,80.0]],"o":1},{"c":"#5E7A2E","s":3,"p":[[95,205.0],[95,198.0],[95,191.0],[95,184.0],[95,177.0],[95,170.0],[95,163.0],[95,156.0],[95,149.0],[95,142.0],[95,135.0]],"o":1},{"c":"#5E7A2E","s":5,"p":[[125.0,125.0],[124.3,130.0],[122.4,134.8],[119.3,139.1],[115.1,142.8],[110.0,145.8],[104.3,147.8],[98.1,148.9],[91.9,148.9],[85.7,147.8],[80.0,145.8],[74.9,142.8],[70.7,139.1],[67.6,134.8],[65.7,130.0],[65.0,125.0],[65.7,120.0],[67.6,115.2],[70.7,110.9],[74.9,107.2],[80.0,104.2],[85.7,102.2],[91.9,101.1],[98.1,101.1],[104.3,102.2],[110.0,104.2],[115.1,107.2],[119.3,110.9],[122.4,115.2],[124.3,120.0],[125.0,125.0]],"o":1}];
-/** Ids y nivel del plan de pruebas (tarjeta k14); el texto de cada elemento es «sam.plan.<id>». */
-const PLAN_IDS: [string, number][] = [["tg1",0],["tt2",1],["tt3",1],["tt4",1],["tt5",1],["tt6",1],["tt7",1],["tt8",1],["tt9",1],["tt10",1],["tt11",1],["tt12",1],["tt13",1],["tg14",0],["tt15",1],["tt16",1],["tt17",1],["tt18",1],["tt19",1],["tt20",1],["tt21",1],["tt22",1],["tt23",1],["tg24",0],["tt25",1],["tt26",1],["tt27",1],["tt28",1],["tt29",1],["tt30",1],["tt31",1],["tt32",1],["tg33",0],["tt34",1],["tt35",1],["tt36",1],["tt37",1],["tt38",1],["tt39",1],["tt40",1],["tt41",1],["tg42",0],["tt43",1],["tt44",1],["tt45",1],["tt46",1],["tt47",1],["tt48",1],["tt49",1],["tt50",1]];
-const PLAN_DONE = new Set(['tt43', 'tt44', 'tt45', 'tt46', 'tt47', 'tt48', 'tt49', 'tt34', 'tt35', 'tt36', 'tt37', 'tt38', 'tt39', 'tt40', 'tt41', 'tt25', 'tt26', 'tt27', 'tt28', 'tt29', 'tt30', 'tt32', 'tt15', 'tt16', 'tt17', 'tt18', 'tt19', 'tt20', 'tt21', 'tt22', 'tt23', 'tt2', 'tt3', 'tt4', 'tt5', 'tt6', 'tt7', 'tt8', 'tt9', 'tt10', 'tt11', 'tt12', 'tt13']);
 
 const theme = (board: Theme['board'], texture: Theme['texture'], card: Theme['card'], cardTexture: Theme['cardTexture']): Theme => ({ board, texture, card, cardTexture });
 const svgImg = (bg: string, hill: string, sun: string, hill2: string) => 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='600' height='400' fill='${bg}'/><circle cx='420' cy='150' r='70' fill='${sun}'/><path d='M0 290 L140 170 L250 250 L370 150 L600 300 L600 400 L0 400Z' fill='${hill2}'/><path d='M0 330 L180 250 L330 320 L470 240 L600 330 L600 400 L0 400Z' fill='${hill}'/></svg>`);
@@ -23,9 +20,13 @@ type Base = { id: string; project: string; x: number; y: number; w: number; h?: 
 let order = 0;
 const base = (b: Base) => ({ id: b.id, project: b.project, x: b.x, y: b.y, w: b.w, h: b.h ?? 0, z: b.z, title: b.title, color: b.color ?? null, pos: order++, trashed: null });
 
-const check = (b: Base, items: [string, string, number?][]): Card => ({ ...base(b), type: 'check', items: items.map(([id, text, lvl]): CheckItem => ({ id, text, done: PLAN_DONE.has(id) || ['a1', 'a2', 'a3', 'b1', 'c2', 'd1'].includes(id), level: lvl ?? 0 })) });
+const check = (b: Base, items: [string, string, number?][]): Card => ({ ...base(b), type: 'check', items: items.map(([id, text, lvl]): CheckItem => ({ id, text, done: ['a1', 'a2', 'a3', 'b1', 'c1', 'c2', 'd1'].includes(id), level: lvl ?? 0 })) });
 const reminder = (b: Base, when: string, bell: boolean): Card => ({ ...base(b), type: 'reminder', when, bell, note: '' });
 const note = (b: Base, body: string): Card => ({ ...base(b), type: 'note', body });
+
+/** Fecha del ejemplo: hoy (el día de instalación) más `n` días, así los recordatorios y la tabla nunca quedan en el pasado. */
+const dayAt = (n: number): Date => { const t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate() + n); };
+const ymd = (n: number): string => { const d = dayAt(n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
 /** Cuaderno de ejemplo: «Mi espacio» y cinco tareas principales, notas del Diario, calendarios y etiquetas. Todo en el idioma pedido. */
 export function sampleDocs(lang: Language = 'es'): Doc[] {
@@ -39,8 +40,9 @@ function build(lang: Language): Doc[] {
   const docs: Doc[] = [];
   // Nombres traducidos de cada elemento: se inyectan como {p1}, {k20}, {px5}… en los enlaces [[…]] de los Markdown.
   const N: Vars = {};
-  for (const id of ['p1', 'p2', 'p3', 'p4', 'p5']) N[id] = s('sam.proj.' + id);
-  for (const id of ['h1', 'h2', 'h3', 'h4', 'h5', 'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7', 'k8', 'k9', 'k10', 'k11', 'k12', 'k13', 'k14', 'k20', 'k21', 'k22', 'k23', 'k24', 'k25']) N[id] = s(`sam.card.${id}.title`);
+  for (const id of ['p1', 'p2', 'p3', 'p5']) N[id] = s('sam.proj.' + id);
+  N.due = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long' }).format(dayAt(27)); // fecha de entrega del mural, en el idioma elegido
+  for (const id of ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'k1', 'k2', 'k3', 'k4', 'k5', 'k6', 'k7', 'k8', 'k9', 'k12', 'k15', 'k20', 'k21', 'k22', 'k23', 'k24', 'k25']) N[id] = s(`sam.card.${id}.title`);
   for (const id of ['px0', 'px1', 'px2', 'px3', 'px4', 'px5', 'px6', 'px7']) N[id] = s('sam.row.' + id);
   const body = (key: string) => s(key, N);
   const ttl = (id: string) => N[id] as string;
@@ -53,37 +55,33 @@ function build(lang: Language): Doc[] {
     { id: 'p1', name: ttl('p1'), color: '#B4532A', folder: 'f1', pos: 1, trashed: null, links: [], theme: theme('papel', 'liso', 'papel', 'liso') },
     { id: 'p2', name: ttl('p2'), color: '#2F6690', folder: 'f2', pos: 2, trashed: null, links: [], theme: theme('noche', 'puntos', 'grafito', 'liso') },
     { id: 'p3', name: ttl('p3'), color: '#5E7A2E', folder: 'f1', pos: 3, trashed: null, links: [], theme: theme('papel', 'cuaderno', 'crema', 'liso') },
-    { id: 'p4', name: ttl('p4'), color: '#7A3E6B', folder: null, pos: 4, trashed: null, links: [], theme: theme('papel', 'acuarela', 'blanco', 'liso') },
-    { id: 'p5', name: ttl('p5'), color: '#0E7C7B', folder: null, pos: 5, trashed: null, theme: theme('papel', 'liso', 'papel', 'liso'),
+    { id: 'p5', name: ttl('p5'), color: '#0E7C7B', folder: null, pos: 4, trashed: null, theme: theme('papel', 'liso', 'papel', 'liso'),
       links: [{ id: 'ln1', from: 'k21', to: 'k20', label: s('sam.link.ln1'), color: null, both: false }, { id: 'ln2', from: 'k23', to: 'k24', label: s('sam.link.ln2'), color: null, both: false }, { id: 'ln3', from: 'k25', to: 'k23', label: s('sam.link.ln3'), color: '#E2B65B', both: false }] },
   ];
 
   const cards: Card[] = [];
   // Mi espacio
   const h = (id: string, x: number, y: number, w: number, z: number) => ({ id, project: 'home', x, y, w, z, title: ttl(id) });
-  cards.push(note(h('h1', 0, 0, 432, 1), body('sam.card.h1.body')));
-  cards.push({ ...base(h('h2', 456, 0, 312, 2)), type: 'widget', widget: 'today' });
-  cards.push({ ...base(h('h3', 792, 0, 276, 3)), type: 'widget', widget: 'projects' });
-  cards.push({ ...base(h('h4', 456, 216, 312, 4)), type: 'widget', widget: 'upcoming' });
-  cards.push(check(h('h5', 0, 384, 432, 5), items('h5', [['hw1'], ['hw2'], ['hw3']])));
+  cards.push({ ...note(h('h1', 0, 0, 520, 1), body('sam.card.h1.body')), h: 470 });
+  cards.push({ ...base(h('h2', 552, 0, 312, 2)), type: 'widget', widget: 'today' });
+  cards.push({ ...base(h('h3', 888, 0, 276, 3)), type: 'widget', widget: 'projects' });
+  cards.push({ ...base(h('h4', 552, 216, 312, 4)), type: 'widget', widget: 'upcoming' });
+  cards.push(check(h('h5', 0, 494, 520, 5), items('h5', [['hw1'], ['hw2'], ['hw3']])));
+  cards.push({ ...note(h('h6', 888, 216, 276, 6), body('sam.card.h6.body')), h: 300, color: '#FFF3C4' });
   // Mudanza de octubre
   cards.push(check({ id: 'k1', project: 'p1', x: 0, y: 0, w: 330, z: 1, title: ttl('k1') }, items('k1', [['g1'], ['a1', 1], ['a2', 1], ['g2'], ['a3', 1], ['a4', 1], ['a6', 1], ['a5']])));
-  cards.push(reminder({ id: 'k2', project: 'p1', x: 354, y: 0, w: 390, z: 2, title: ttl('k2') }, '2026-10-02T10:00', true));
+  cards.push(reminder({ id: 'k2', project: 'p1', x: 354, y: 0, w: 390, z: 2, title: ttl('k2') }, `${ymd(3)}T10:00`, true));
   cards.push({ ...base({ id: 'k3', project: 'p1', x: 768, y: 0, w: 300, z: 3, title: ttl('k3') }), type: 'table', heads: [s('sam.card.k3.head1'), s('sam.card.k3.head2'), s('sam.card.k3.head3')], rows: [{ id: 't1', cells: [s('sam.card.k3.t1.c1'), '180 €', s('sam.card.k3.t1.c3')] }, { id: 't2', cells: [s('sam.card.k3.t2.c1'), '45 €', s('sam.card.k3.t2.c3')] }, { id: 't3', cells: [s('sam.card.k3.t3.c1'), '90 €', s('sam.card.k3.t3.c3')] }] });
   cards.push(check({ id: 'k4', project: 'p1', x: 354, y: 176, w: 300, z: 4, title: ttl('k4') }, items('k4', [['b1'], ['b2'], ['b3']])));
   cards.push(note({ id: 'k5', project: 'p1', x: 0, y: 500, w: 330, h: 190, z: 5, title: ttl('k5') }, body('sam.card.k5.body')));
   // Curso de fotografía
-  cards.push(check({ id: 'k6', project: 'p2', x: 0, y: 0, w: 380, z: 1, title: ttl('k6') }, items('k6', [['c1'], ['c2'], ['c3']])));
-  cards.push(reminder({ id: 'k7', project: 'p2', x: 410, y: 48, w: 360, z: 2, title: ttl('k7') }, '2026-10-09T23:59', false));
+  cards.push(check({ id: 'k6', project: 'p2', x: 0, y: 0, w: 380, z: 1, title: ttl('k6') }, items('k6', [['c1'], ['c2'], ['c3'], ['c4'], ['c5']])));
+  cards.push(reminder({ id: 'k7', project: 'p2', x: 410, y: 0, w: 360, z: 2, title: ttl('k7') }, `${ymd(7)}T23:59`, false));
+  cards.push(note({ id: 'k15', project: 'p2', x: 410, y: 168, w: 360, h: 330, z: 3, title: ttl('k15') }, body('sam.card.k15.body')));
   // Casa · semana
-  cards.push(check({ id: 'k8', project: 'p3', x: 0, y: 0, w: 290, z: 1, title: ttl('k8') }, items('k8', [['d1'], ['d2'], ['d3'], ['d4']])));
-  cards.push(reminder({ id: 'k9', project: 'p3', x: 314, y: 0, w: 360, z: 2, title: ttl('k9') }, '2026-09-30T19:00', true));
-  cards.push(reminder({ id: 'k12', project: 'p3', x: 314, y: 168, w: 360, z: 3, title: ttl('k12') }, '2026-09-26T12:00', true));
-  // Diseño de mi app
-  cards.push(reminder({ id: 'k10', project: 'p4', x: 0, y: 0, w: 460, z: 2, title: ttl('k10') }, '2026-09-28T18:00', true));
-  cards.push(note({ id: 'k11', project: 'p4', x: 490, y: 0, w: 420, h: 240, z: 1, title: ttl('k11') }, body('sam.card.k11.body')));
-  cards.push(note({ id: 'k13', project: 'p4', x: 0, y: 192, w: 460, h: 280, z: 3, title: ttl('k13'), color: '#FFF3C4' }, body('sam.card.k13.body')));
-  cards.push(check({ id: 'k14', project: 'p4', x: 490, y: 264, w: 460, z: 4, title: ttl('k14') }, PLAN_IDS.map(([id, lvl]) => [id, s('sam.plan.' + id), lvl] as [string, string, number])));
+  cards.push(check({ id: 'k8', project: 'p3', x: 0, y: 0, w: 290, z: 1, title: ttl('k8') }, items('k8', [['d1'], ['d2'], ['d3'], ['d4'], ['d5'], ['d6']])));
+  cards.push(reminder({ id: 'k9', project: 'p3', x: 314, y: 0, w: 360, z: 2, title: ttl('k9') }, `${ymd(2)}T19:00`, true));
+  cards.push(reminder({ id: 'k12', project: 'p3', x: 314, y: 168, w: 360, z: 3, title: ttl('k12') }, `${ymd(-1)}T12:00`, true)); // ya vencido, para ver cómo se muestra
 
   // Encargo · Mural Café Aurora
   const tags = [{ id: 'tg1', name: s('sam.tag.tg1'), color: 'blue' }, { id: 'tg2', name: s('sam.tag.tg2'), color: 'green' }, { id: 'tg3', name: s('sam.tag.tg3'), color: 'orange' }, { id: 'tg4', name: s('sam.tag.tg4'), color: 'red' }, { id: 'tg5', name: s('sam.tag.tg5'), color: 'purple' }];
@@ -103,14 +101,14 @@ function build(lang: Language): Doc[] {
   });
   const px2hist = [[SKETCHES, 20], [FIRST, 12], [REVIEW, 4]].map(([n, d]) => ({ state: ST[n], at: now - d * day }));
   T.rows = [
-    row('px1', HIRED, CLIENT, ['tg3'], '2026-09-01', '2026-09-03', 3, 0, true),
-    row('px2', REVIEW, ME, ['tg1'], '2026-09-07', '2026-09-18', 14, 600, true, { desc: body('sam.row.px2.body'), hist: px2hist, subs: [{ id: 'sbx1', text: s('sam.row.px2.sub1'), done: true }, { id: 'sbx2', text: s('sam.row.px2.sub2'), done: true }, { id: 'sbx3', text: s('sam.row.px2.sub3'), done: false }] }),
-    row('px3', FIRST, ME, ['tg2'], '2026-09-21', '2026-09-30', 10, 300, false),
-    row('px4', SKETCHES, CLIENT, ['tg3', 'tg4'], '2026-09-25', '', 2, 0, false, { milestone: true }),
-    row('px5', -1, ME, ['tg2'], '2026-10-05', '2026-10-23', 48, 2400, false),
-    row('px6', -1, COLLAB, ['tg2', 'tg4'], '2026-10-24', '2026-10-27', 6, 250, false),
-    row('px7', -1, ME, ['tg3'], '2026-10-02', '', 1, 0, false, { recur: 'week' }),
-    row('px0', HIRED, ME, ['tg3'], '2026-08-28', '', 1, 0, true, { archived: true }),
+    row('px1', HIRED, CLIENT, ['tg3'], ymd(-34), ymd(-32), 3, 0, true),
+    row('px2', REVIEW, ME, ['tg1'], ymd(-28), ymd(-17), 14, 600, true, { desc: body('sam.row.px2.body'), hist: px2hist, subs: [{ id: 'sbx1', text: s('sam.row.px2.sub1'), done: true }, { id: 'sbx2', text: s('sam.row.px2.sub2'), done: true }, { id: 'sbx3', text: s('sam.row.px2.sub3'), done: false }] }),
+    row('px3', FIRST, ME, ['tg2'], ymd(-14), ymd(-5), 10, 300, false),
+    row('px4', SKETCHES, CLIENT, ['tg3', 'tg4'], ymd(-3), '', 2, 0, false, { milestone: true }),
+    row('px5', -1, ME, ['tg2'], ymd(5), ymd(23), 48, 2400, false),
+    row('px6', -1, COLLAB, ['tg2', 'tg4'], ymd(24), ymd(27), 6, 250, false),
+    row('px7', -1, ME, ['tg3'], ymd(2), '', 1, 0, false, { recur: 'week' }),
+    row('px0', HIRED, ME, ['tg3'], ymd(-40), '', 1, 0, true, { archived: true }),
   ];
   const R: Record<string, Row> = {}; T.rows.forEach((r) => { R[r.id] = r; });
   const assets: Asset[] = [
@@ -154,16 +152,16 @@ function build(lang: Language): Doc[] {
 
   // Notas diarias
   const journal: Project = { id: JOURNAL_ID, name: s('sam.proj.journal'), color: '#8A6A3A', hidden: true, folder: null, pos: -1, trashed: null, links: [], theme: DEFAULT_THEME };
-  const daily: Card[] = ['2026-09-25', '2026-09-27', '2026-09-28'].map((d, i) => ({ ...base({ id: dailyId(d), project: JOURNAL_ID, x: 0, y: 0, w: 640, z: 1, title: s('sam.daily.title') }), pos: i, type: 'note' as const, day: d, body: body(`sam.daily.${d}.body`) }));
+  const daily: Card[] = [ymd(-5), ymd(-3), ymd(-1)].map((d, i) => ({ ...base({ id: dailyId(d), project: JOURNAL_ID, x: 0, y: 0, w: 640, z: 1, title: s('sam.daily.title') }), pos: i, type: 'note' as const, day: d, body: body(`sam.daily.d${i + 1}.body`) }));
 
   // Calendarios
   const ev = (id: string) => s(`sam.event.${id}.title`), evNote = (id: string) => s(`sam.event.${id}.note`);
   const events: CalEvent[] = [
-    { id: 'm1', calendar: 'cal-main', title: ev('m1'), start: '2026-10-01T08:30', end: '2026-10-01T09:30', allDay: false, note: '', repeat: 'none' },
-    { id: 'e1', calendar: 'cal-birthdays', title: ev('e1'), start: '2026-09-12', end: '2026-09-12', allDay: true, note: evNote('e1'), repeat: 'year' },
-    { id: 'e2', calendar: 'cal-birthdays', title: ev('e2'), start: '2026-09-30', end: '2026-09-30', allDay: true, note: evNote('e2'), repeat: 'year' },
-    { id: 'e3', calendar: 'cal-birthdays', title: ev('e3'), start: '2026-10-03', end: '2026-10-03', allDay: true, note: evNote('e3'), repeat: 'year' },
-    { id: 'e4', calendar: 'cal-birthdays', title: ev('e4'), start: '2026-10-14T19:30', end: '2026-10-14T20:00', allDay: false, note: '', repeat: 'year' },
+    { id: 'm1', calendar: 'cal-main', title: ev('m1'), start: `${ymd(4)}T08:30`, end: `${ymd(4)}T09:30`, allDay: false, note: '', repeat: 'none' },
+    { id: 'e1', calendar: 'cal-birthdays', title: ev('e1'), start: ymd(6), end: ymd(6), allDay: true, note: evNote('e1'), repeat: 'year' },
+    { id: 'e2', calendar: 'cal-birthdays', title: ev('e2'), start: ymd(12), end: ymd(12), allDay: true, note: evNote('e2'), repeat: 'year' },
+    { id: 'e3', calendar: 'cal-birthdays', title: ev('e3'), start: ymd(18), end: ymd(18), allDay: true, note: evNote('e3'), repeat: 'year' },
+    { id: 'e4', calendar: 'cal-birthdays', title: ev('e4'), start: `${ymd(9)}T19:30`, end: `${ymd(9)}T20:00`, allDay: false, note: '', repeat: 'year' },
   ];
   const settings: Settings = { ...DEFAULT_SETTINGS, lang, weekNumbers: true, dayStart: 6, dayEnd: 24, notify: true, sound: true, showMissed: true };
 

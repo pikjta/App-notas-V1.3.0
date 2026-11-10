@@ -52,7 +52,7 @@ describe.each(SUPPORTED)('datos de ejemplo en %s', (lang: Language) => {
         expect((m[2] ?? '').trim().length, 'alias').toBeGreaterThan(0);
       }
     }
-    expect(n).toBe(9);
+    expect(n).toBe(11);
   });
 
   it('la Tabla PM tiene 8 filas y la fórmula «Margen» da un número', () => {
