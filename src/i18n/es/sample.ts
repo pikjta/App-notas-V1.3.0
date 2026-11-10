@@ -6,7 +6,7 @@
 //   sam.card.<id>.title / .body / .head* / ... tarjetas (hN = Inicio, kN = resto); checklists: sam.card.<id>.i.<idItem>
 //   sam.row.<pxN> / .sub<n> / .body            filas de la Tabla PM «Seguimiento del encargo»
 //   sam.col.*, sam.mat.*                       columnas extra y tabla «Materiales»
-//   sam.tag.*, sam.link.*, sam.daily.*, sam.event.*, sam.plan.*
+//   sam.tag.*, sam.link.*, sam.daily.*, sam.event.*
 // Enlaces [[…]] dentro de los Markdown: el destino se escribe con variables que sampleDocs rellena con el nombre
 // traducido del elemento: {pN} tarea principal, {kN} tarjeta, {pxN} fila (p. ej. [[{p5}/{k20}/{px5}|pintado del mural]]).
 // Hay que conservar esas variables tal cual en cada idioma; solo se traduce el alias tras «|».
@@ -15,10 +15,9 @@ export const sample = {
   'sam.folder.f1': 'Casa y vida',
   'sam.folder.f2': 'Aprendizaje',
   'sam.proj.home': 'Mi espacio',
-  'sam.proj.p1': 'Mudanza de octubre',
+  'sam.proj.p1': 'Mudanza',
   'sam.proj.p2': 'Curso de fotografía',
   'sam.proj.p3': 'Casa · semana',
-  'sam.proj.p4': 'Diseño de mi app',
   'sam.proj.p5': 'Encargo · Mural Café Aurora',
   'sam.proj.journal': 'Diario',
 
@@ -75,11 +74,6 @@ export const sample = {
   'sam.card.k9.title': 'Regar las plantas',
   'sam.card.k12.title': 'Pagar el recibo del agua',
 
-  // Diseño de mi app
-  'sam.card.k10.title': 'Decidir: ¿editar sobre el tablero o abrir la tarjeta en grande?',
-  'sam.card.k11.title': 'Decisiones tomadas',
-  'sam.card.k13.title': 'Notas internas de desarrollo',
-  'sam.card.k14.title': 'Plan de pruebas · Tabla PM',
 
   // Encargo · Mural Café Aurora: tarjetas, flechas, etiquetas globales
   'sam.card.k20.title': 'Seguimiento del encargo',
@@ -92,6 +86,16 @@ export const sample = {
   'sam.link.ln1': 'contexto',
   'sam.link.ln2': 'paleta',
   'sam.link.ln3': 'idea',
+  // 1.3.0: bienvenida con guía, tarjeta de Ideas, apuntes del curso y elementos extra de las listas
+  'sam.card.h1.body': '## Te damos la bienvenida a OMNIA\nEsta es tu página de inicio. Todo lo que ves son **tarjetas**: muévelas, cambia su tamaño, bórralas o crea las tuyas con «Añadir tarjeta».\n\n### Primeros pasos\n- [ ] Apunta las metas del mes en la tarjeta *Ideas*\n- [ ] Crea tu primera tarea principal en la barra lateral\n- [ ] Escribe `[[ ]]` en una nota para enlazar con otra tarjeta\n- [ ] Activa la campana de un recordatorio para que te avise\n- [ ] Cambia el aspecto con «Personalizar tablero»\n\n### Ejemplos para explorar\n- **Listas y recordatorios:** [[{p1}|Mudanza]] y [[{p3}|Casa · semana]]\n- **Tabla PM:** [[{p5}/{k20}|seguimiento de un encargo]], con estados, fórmulas y cronología\n- **Diario:** una nota por día, que puedes enlazar desde cualquier tarjeta\n- **Calendario:** cumpleaños y citas, con repeticiones\n\n> Todo se guarda en tu equipo. Activa las copias automáticas y, si quieres, una contraseña en Ajustes.',
+  'sam.card.h6.title': 'Ideas',
+  'sam.card.h6.body': '## Ideas sueltas\nUn rincón para lo que aún no tiene sitio. Cuando una idea madure, conviértela en tarea.\n\n- [ ] Un álbum con las mejores fotos del año\n- [ ] Aprender a revelar película en casa\n- [ ] Escapada de fin de semana a la sierra\n- [ ] Cocinar una receta nueva cada domingo\n\n> Truco: enlaza una idea con su tarea escribiendo `[[ ]]`, por ejemplo [[{p2}|Curso de fotografía]]. #ideas',
+  'sam.card.k15.title': 'Apuntes · Luz natural',
+  'sam.card.k15.body': '### Lo que he aprendido\n- **Hora dorada:** la hora tras el amanecer y la previa al ocaso; luz cálida y suave.\n- **Hora azul:** justo después del ocaso, con tonos fríos.\n- **Luz dura** (mediodía): sombras marcadas; busca sombra abierta.\n\n### Para el ejercicio\n- [ ] Elegir un motivo y fotografiarlo a tres horas distintas\n- [ ] Comparar el histograma de cada toma\n- [ ] Escribir una frase por foto\n\n> Relacionado: [[{p2}/{k7}|entrega del ejercicio]] #fotografía',
+  'sam.card.k6.i.c4': 'Practicar el triángulo de exposición',
+  'sam.card.k6.i.c5': 'Subir la mejor foto al foro del curso',
+  'sam.card.k8.i.d5': 'Huevos',
+  'sam.card.k8.i.d6': 'Verduras',
   'sam.tag.tg1': 'Ilustración',
   'sam.tag.tg2': 'Pintura',
   'sam.tag.tg3': 'Cliente',
@@ -142,67 +146,13 @@ export const sample = {
   'sam.event.e4.title': 'Llamar a Leo por su cumple',
 
   // Notas largas (Markdown). Los enlaces [[…]] usan variables con el nombre real del destino: {pN} = tarea principal, {kN} = tarjeta, {pxN} = fila de la Tabla PM; el alias tras «|» sí se traduce
-  'sam.card.h1.body': '## Esta es tu página de inicio\nEdítala como quieras: **mueve**, cambia el tamaño o borra tarjetas, y añade las tuyas con «Añadir tarjeta».\n\n- [ ] Escribir mis objetivos del mes\n- [ ] Probar los widgets de *Hoy* y *Próximos 7 días*\n\n> Accesos rápidos: [[{p1}|Mudanza]] · [[{p2}|Fotografía]]',
   'sam.card.k5.body': '### Llaves\nLas **llaves del trastero** están en el cajón de la entrada.\n\n- [ ] Avisar al portero *24 h antes* para el ascensor\n- [x] Reservar el camión\n\n> Ver también [[{p3}/{k8}|la lista de la compra]] #mudanza',
-  'sam.card.k11.body': '## Interfaz\n- Cuadrícula **libre**, tarjetas de distintos tamaños\n- Arrastrar y soltar con *imán*\n- Editar el texto con un clic\n- Tareas y subtareas en las checklists\n\n## Datos\n- [x] Copias automáticas en archivo\n- [ ] Decidir fechas en tareas\n\n`100% local` #diseño',
-  'sam.card.k13.body': '## Notas internas de desarrollo\n\n### Nota 1 · Funciones generales de la app\nNo son de la Tabla PM. Se implementarán **después de terminar la maqueta de la Tabla PM**:\n\n- [x] #7 Vista de grafo\n- [x] #8 Nota diaria\n- [x] #10 Paleta de color extraída\n- [x] #11 Flechas entre tarjetas\n- [x] #12 Tarjeta de boceto\n- [x] #17 Cifrado con contraseña\n\n### Nota 2 · Plan de pruebas de la Tabla PM\nAl terminar las 4 fases de la maqueta, recorrer la checklist [[{p4}/{k14}|Plan de pruebas · Tabla PM]].\n\n### Nota 3 · Resultados de la Fase 1\n- [x] 12/12 pruebas automáticas superadas (lógica)\n- [x] Mejora: Tab salta los botones ocultos de las filas\n- [ ] Confirmar a mano: orden de Tab, arrastres reales y aspecto visual\n\n### Nota 4 · Resultados de la Fase 2\n- [x] 9/9 pruebas automáticas superadas\n- [x] Corrección: el .md exportado pone entre comillas los valores con «: » y usa tipos de Obsidian (casilla = true/false, fecha + fecha_fin)\n- [ ] Confirmar a mano: abrir un .md exportado en Obsidian\n\n### Nota 5 · Resultados de la Fase 3\n- [x] 8/8 pruebas automáticas superadas\n- [x] Error corregido: identificadores repetidos al crear reglas de formato y etiquetas globales\n- [x] Mejoras: la página de la fila se cierra al hacer clic fuera; asa ⋮⋮ con menú de fila (abrir, duplicar, insertar, archivar, eliminar); eliminar columna desde su menú y desde Propiedades\n- [ ] Pendiente: que el cronómetro sobreviva a recargar (solo en la app real)\n\n### Nota 6 · Resultados de la Fase 4\n- [x] 8/8 pruebas automáticas superadas\n- [x] Corregido: CSV con coma exporta decimales con punto; los resúmenes se exportan como números\n- [x] Corregido: un resumen toma el formato de la columna que resume (sin «€» al sumar casillas)\n- [ ] Confirmar a mano: abrir el CSV exportado en Excel o LibreOffice\n\n### Nota 7 · Pruebas generales\n- [x] 7/8 superadas; la de navegadores necesita prueba real\n- [x] Corregido: algunas acciones necesitaban deshacer dos veces\n- [x] Corregido: crear una etiqueta desde la celda = un solo paso de deshacer\n- [x] Corregido: icono de la flecha de volver legible sobre colores claros\n- [x] Nuevo: «Copiar para pegar en Excel» (tabla real, no texto con «;»)\n- [x] Nuevo: filas por tandas de 100 para tablas grandes\n- [x] Mejora: la búsqueda abre directamente la página de la fila\n- [ ] Pendiente: probar en Brave, Firefox y Safari\n- [ ] Idea: actualizar los enlaces [[ ]] al renombrar una fila\n### Nota 8 · Seguridad de la versión definitiva\n**Modelo de amenazas**\n- Sin cifrado: quien use el navegador lo ve todo (la app o F12 → IndexedDB)\n- Con cifrado y app bloqueada: solo hay datos cifrados; hace falta la contraseña o las 24 palabras\n- Con la app abierta: el cifrado no protege una sesión a la vista → bloqueo automático corto\n- Límite: si el ordenador ya está comprometido (extensión maliciosa, keylogger), pueden capturar la contraseña al escribirla\n\n**Ya hecho en la maqueta**\n- [x] AES-256-GCM para datos, copias internas y backups\n- [x] Clave de datos envuelta con la contraseña (PBKDF2-SHA256, 600.000 iter.) y con 24 palabras BIP-39\n- [x] Al bloquear se borran de la memoria visible los datos y el historial de deshacer\n- [x] Bloqueo automático por inactividad; la contraseña no se guarda\n\n**Pendiente para la versión definitiva**\n- [ ] Argon2id en lugar de PBKDF2 para derivar la clave de la contraseña\n- [ ] Empaquetar como app de escritorio (p. ej. Tauri): fuera del navegador y sus extensiones\n- [ ] Llavero del sistema y desbloqueo con Touch ID / Windows Hello\n- [ ] Sin recursos externos: fuentes y librerías incluidas en la app\n- [ ] Política de seguridad de contenido (CSP) estricta\n- [ ] Nunca insertar HTML del usuario; tratar notas, CSV y backups importados como texto\n- [ ] Origen propio para la app (no compartir dominio con otras páginas)\n- [ ] Opción: bloquear al minimizar u ocultar la ventana\n- [ ] Limpiar el portapapeles tras copiar las palabras de recuperación\n- [ ] Si sigue en navegador: recomendar un perfil dedicado sin extensiones',
-  'sam.card.k21.body': '### Café Aurora\nMural de **6 × 3 m** en la pared del fondo.\n\n- Paleta cálida, tema *amanecer en la sierra*\n- Entrega antes del **27 de octubre**\n\n> Abre la tabla con el botón **Abrir tabla** o con doble clic en su franja superior.\n\nPróximo paso: [[{p5}/{k20}/{px5}|pintado del mural]]',
+  'sam.card.k21.body': '### Café Aurora\nMural de **6 × 3 m** en la pared del fondo.\n\n- Paleta cálida, tema *amanecer en la sierra*\n- Entrega antes del **{due}**\n\n> Abre la tabla con el botón **Abrir tabla** o con doble clic en su franja superior.\n\nPróximo paso: [[{p5}/{k20}/{px5}|pintado del mural]]',
   'sam.row.px2.body': '## Objetivo\nTres propuestas de composición para el mural, con **luz de amanecer** y la sierra al fondo.\n\n- [x] Fotos de referencia del local\n- [x] Tres miniaturas\n- [ ] Elegir la definitiva con el cliente\n\n> Ver el brief en [[{p5}/{k21}|Brief del café]]',
 
   // Notas del Diario (los enlaces [[…]] siguen la misma convención de variables)
-  'sam.daily.2026-09-25.body': '## Plan del día\n- [x] Llamar a Café Aurora para medir la pared\n- [x] Fotos del local con luz de tarde\n\n## Notas\nLa pared norte recibe sol directo hasta las 14 h: conviene barniz con filtro UV.\nVer [[{p5}/{k20}/{px6}|barniz y fotos]].',
-  'sam.daily.2026-09-27.body': '## Plan del día\n- [x] Tres miniaturas de composición\n- [ ] Elegir paleta definitiva\n\n## Ideas y bocetos\nProbar la paleta del [[{p5}/{k24}|amanecer]] con un azul más frío en la sierra.',
-  'sam.daily.2026-09-28.body': '## Plan del día\n- [ ] Enviar bocetos al cliente\n- [ ] Pedir presupuesto del andamio\n\n## Notas\nRepasar el [[{p5}/{k21}|brief]] antes de la reunión del jueves.',
+  'sam.daily.d1.body': '## Plan del día\n- [x] Llamar a Café Aurora para medir la pared\n- [x] Fotos del local con luz de tarde\n\n## Notas\nLa pared norte recibe sol directo hasta las 14 h: conviene barniz con filtro UV.\nVer [[{p5}/{k20}/{px6}|barniz y fotos]].',
+  'sam.daily.d2.body': '## Plan del día\n- [x] Tres miniaturas de composición\n- [ ] Elegir paleta definitiva\n\n## Ideas y bocetos\nProbar la paleta del [[{p5}/{k24}|amanecer]] con un azul más frío en la sierra.',
+  'sam.daily.d3.body': '## Plan del día\n- [ ] Enviar bocetos al cliente\n- [ ] Pedir presupuesto del andamio\n\n## Notas\nRepasar el [[{p5}/{k21}|brief]] antes de la reunión del jueves.',
 
-  // Plan de pruebas · Tabla PM (tarjeta k14): grupos (tgN) y pruebas (ttN)
-  'sam.plan.tg1': 'Fase 1 · Núcleo',
-  'sam.plan.tt2': 'Crear una Tabla PM, abrirla en grande y volver al tablero sin perder datos',
-  'sam.plan.tt3': 'Añadir, editar y borrar filas (y deshacerlo)',
-  'sam.plan.tt4': 'Crear una columna de cada tipo y cambiar el tipo de una columna con datos',
-  'sam.plan.tt5': 'Selección: crear, renombrar, recolorear y borrar opciones',
-  'sam.plan.tt6': 'Estado con fases: definir 4 fases y sus estados; desplegable agrupado por fase',
-  'sam.plan.tt7': 'El progreso se recalcula al cambiar el estado y llega a la barra del tablero',
-  'sam.plan.tt8': 'Reordenar filas y columnas arrastrando; cambiar ancho; ocultar y mostrar',
-  'sam.plan.tt9': 'Filtros combinados Y / O (etiqueta contiene, estado en fase, fecha vencida)',
-  'sam.plan.tt10': 'Orden por varias columnas',
-  'sam.plan.tt11': 'Fila de totales: suma, media, mín., máx., conteo y % de casillas',
-  'sam.plan.tt12': 'Navegación con teclado: flechas, Enter y Tab',
-  'sam.plan.tt13': 'Etiquetas globales: una etiqueta nueva aparece en otra tabla; renombrarla se propaga',
-  'sam.plan.tg14': 'Fase 2 · Páginas y organización',
-  'sam.plan.tt15': 'Abrir una fila como página y editar sus propiedades desde el panel',
-  'sam.plan.tt16': 'Descripción en Markdown y subtareas dentro de la página',
-  'sam.plan.tt17': 'Enlaces de vuelta: una nota que enlaza la fila aparece en «Enlazado desde»',
-  'sam.plan.tt18': 'Comando «/»: insertar cada tipo de bloque',
-  'sam.plan.tt19': 'Exportar una fila en .md y abrirla en Obsidian o en un editor de texto',
-  'sam.plan.tt20': 'Kanban: arrastrar entre columnas cambia el estado; agrupar por fase o responsable',
-  'sam.plan.tt21': 'Historial: cada cambio de estado queda con su fecha; tiempo pasado en cada fase',
-  'sam.plan.tt22': 'Archivar y desarchivar filas; decidir si cuentan en totales y progreso',
-  'sam.plan.tt23': 'Plantillas: crear una tabla desde plantilla y guardar una tabla propia como plantilla',
-  'sam.plan.tg24': 'Fase 3 · Tiempo y fechas',
-  'sam.plan.tt25': 'Cronología: arrastrar y estirar barras cambia las fechas; zoom por días, semanas y meses',
-  'sam.plan.tt26': 'Dependencias: mover una tarea bloqueante avisa o desplaza las dependientes',
-  'sam.plan.tt27': 'Hitos visibles en la cronología',
-  'sam.plan.tt28': 'Vista Calendario de la tabla',
-  'sam.plan.tt29': 'Las filas con fecha aparecen en Hoy y en el Calendario; al abrirlas se va a la fila',
-  'sam.plan.tt30': 'Recurrentes: al completar se genera la siguiente con la fecha correcta',
-  'sam.plan.tt31': 'Cronómetro: iniciar y pausar, varias sesiones, solo uno activo a la vez, sobrevive a recargar',
-  'sam.plan.tt32': 'Formato condicional: reglas (vencida, bloqueada…) y prioridad entre reglas',
-  'sam.plan.tg33': 'Fase 4 · Cálculo y conexiones',
-  'sam.plan.tt34': 'Fórmulas: aritmética, texto, fechas y condiciones (si…)',
-  'sam.plan.tt35': 'Fórmulas: error claro si es inválida; siguen funcionando al renombrar una columna',
-  'sam.plan.tt36': 'Relaciones: enlazar filas entre tablas y ver resúmenes (suma, conteo)',
-  'sam.plan.tt37': 'Relaciones: qué pasa al borrar o archivar una fila relacionada',
-  'sam.plan.tt38': 'Vistas enlazadas en el Inicio con filtros propios; editar ahí actualiza el original',
-  'sam.plan.tt39': 'Imágenes: añadir y quitar; vista Galería; espacio ocupado en el almacenamiento',
-  'sam.plan.tt40': 'Exportar CSV y abrirlo en Excel / LibreOffice (tildes, comas y saltos de línea)',
-  'sam.plan.tt41': 'Importar CSV de Excel o Google Sheets y asignar las columnas',
-  'sam.plan.tg42': 'Pruebas generales',
-  'sam.plan.tt43': 'Deshacer y rehacer en todas las acciones de la tabla',
-  'sam.plan.tt44': 'La tabla entra en los backups (automático, interno y manual) y se restaura completa',
-  'sam.plan.tt45': 'La búsqueda global encuentra filas y celdas',
-  'sam.plan.tt46': 'Una Tabla PM borrada va a la papelera y se restaura con todo',
-  'sam.plan.tt47': 'Enlaces [[ ]] a filas desde las notas',
-  'sam.plan.tt48': 'Legibilidad con todos los ambientes, colores de tarjeta y modo oscuro',
-  'sam.plan.tt49': 'Rendimiento fluido con 500 filas o más',
-  'sam.plan.tt50': 'Funciona en Brave, Firefox y Safari',
 } as const;
