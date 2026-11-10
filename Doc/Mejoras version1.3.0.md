@@ -146,3 +146,25 @@ Más texturas y ambientes en todos los sitios donde se pueden elegir, con un sel
   - **Textos nuevos en 6 idiomas:** `ui.side.taskColor`, `ui.tone.grid`, `ui.tone.open`.
   - **Pruebas:** nueva `src/__tests__/colors130.test.ts`; actualizadas `appearance.test.ts`, `legibility.test.ts` y `textures130.test.ts` (usan `boardPalette`/`cardPalette`).
 - **Cómo se comprobó:** sin ejecutar. Pendiente: abrir «Personalizar tablero» (iconos por páginas, línea de 12 colores + paleta, elegir un tono en tablero y tarjetas), «Personalizar barra» y el calendario, y el botón de color en la barra lateral. Vigilar que la línea de colores no se parta en dos filas en el panel de 440 px y que el icono de la paleta se vea sobre su fondo de colores.
+
+### 7.1 Más correcciones de compilación (tras el punto 4)
+
+- **`appearance.test.ts` (migración de temas):** el color nuevo del tablero se llamaba `salvia`, igual que un id antiguo que se migra a `niebla`. Ahora el id nuevo es `salviaclaro` (mismo aspecto y nombre traducido); la migración de `salvia` a `niebla` sigue igual. `colors130.test.ts` comprueba ambas cosas.
+- **24 suites con error de transformación:** `PmTable.tsx` tenía dos funciones `startResize` (la de columnas y la mía de la esquina). La mía pasa a `startBoxResize`.
+- **`sidebar6.test.tsx`:** el selector «Icono de la tarea» perdió su grupo accesible al pasar a páginas. `Pager` acepta una etiqueta opcional (`label`) y el selector la usa; el test espera ahora 21 iconos por página.
+- **Cómo se comprobó:** sin ejecutar; pendiente de la compilación de GitHub.
+
+## 9. Cuaderno de ejemplo: tarjetas por defecto más elaboradas
+
+- **Qué se pidió:** que al instalar aparezcan tarjetas por defecto bien elaboradas y en el idioma del sistema (que ya se detectaba en el primer arranque).
+- **Qué se hizo:**
+  - **Quitada** la tarea «Diseño de mi app» (notas internas de desarrollo y plan de pruebas de 50 elementos): no era ejemplo para un usuario nuevo. Borradas sus claves `sam.plan.*`, `sam.proj.p4`, `sam.card.k10/k11/k13/k14.*` en los 6 idiomas.
+  - **Bienvenida nueva** (`sam.card.h1.body`) con primeros pasos y enlaces a ejemplos; la página de inicio se recoloca para que no se solapen las tarjetas.
+  - **Tarjeta «Ideas»** nueva en «Mi espacio» (`h6`, nota amarilla con lista y truco de enlaces `[[ ]]`).
+  - **Apuntes · Luz natural** nueva en «Curso de fotografía» (`k15`) y elementos extra en las listas del curso y de la compra.
+  - **Fechas relativas al día de instalación** (`ymd()` en `src/lib/sample.ts`): recordatorios, Tabla PM, notas del Diario y eventos del calendario. Un recordatorio queda vencido a propósito, y la fecha de entrega del mural sale en el idioma elegido (`{due}`).
+  - **Nombres sin mes:** «Mudanza de octubre» pasa a «Mudanza» (y su equivalente en cada idioma). Las claves del Diario son ahora `sam.daily.d1…d3`.
+  - Mismos 120 textos `sam.*` en los 6 idiomas (comprobado con una lista de claves).
+- **Pruebas:** `sample.test.ts` (nombres, fechas relativas) y `sample-i18n.test.ts` (11 enlaces en vez de 9).
+- **Nota:** los usuarios que ya tienen datos no se ven afectados: el ejemplo solo se crea con un cuaderno vacío.
+- **Cómo se comprobó:** sin ejecutar; pendiente de la compilación de GitHub y de ver la página de inicio.
